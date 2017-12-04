@@ -1,0 +1,11 @@
+#: components/config.js
+msgid "All settings"
+msgstr "Todas"
+
+#: components/config.js
+msgid "Config saved"
+msgstr "Configuración salvada"
+
+#: components/config.js
+msgid "Error saving config"
+msgstr "Error salvando configuración"
