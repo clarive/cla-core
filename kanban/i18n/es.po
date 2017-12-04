@@ -1,0 +1,341 @@
+#: modules/api/board.js
+msgid "Temporary Board"
+msgstr "Tablero Temporal"
+
+#: modules/api/board.js
+msgid "You can't edit this board"
+msgstr "No puedes editar este tablero"
+
+#: modules/api/board.js
+msgid "You can't delete this board"
+msgstr "No puedes eliminar este tablero"
+
+#: modules/api/board.js
+msgid "board not found"
+msgstr "tablero no encontrado"
+
+#: modules/api/topic.js
+msgid "You don't have permission to change topic value of '%1'"
+msgstr "No tienes permiso para cambiar el valor del tópico de '%1'"
+
+#: public/bundle.js
+msgid "Filter"
+msgstr "Filtro"
+
+#: public/bundle.js
+msgid "Configure"
+msgstr "Configurar"
+
+#: public/bundle.js
+msgid "Plan Mode"
+msgstr "Modo Plan"
+
+#: public/bundle.js
+msgid "No Swimlanes"
+msgstr "Sin Swimlanes"
+
+#: public/bundle.js
+msgid "Creator"
+msgstr "Creador"
+
+#: public/bundle.js
+msgid "Categories"
+msgstr "Categorías"
+
+#: public/bundle.js
+msgid "View"
+msgstr "Ver"
+
+#: public/bundle.js
+msgid "Create New Kanban Board"
+msgstr "Crear nuevo Tablero Kanban"
+
+#: public/bundle.js
+msgid "Ok"
+msgstr "Ok"
+
+#: public/bundle.js
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: public/bundle.js
+msgid "Board Name"
+msgstr "Nombre del Tablero"
+
+#: public/bundle.js
+msgid "Board Name Required"
+msgstr "Nombre del Tablero obligatorio"
+
+#: public/bundle.js
+msgid "Board Type"
+msgstr "Tipo de Tablero"
+
+#: public/bundle.js
+msgid "Dynamic"
+msgstr "Dinámico"
+
+#: public/bundle.js
+msgid "Static"
+msgstr "Estático"
+
+#: public/bundle.js
+msgid "Not Found"
+msgstr "No encontrado"
+
+#: public/bundle.js
+msgid "Please select"
+msgstr "Por favor, seleccione"
+
+#: public/bundle.js
+msgid "Select a Status"
+msgstr "Seleccione un estado"
+
+#: public/bundle.js
+msgid ""
+"this list has multiple statuses associated with it, please select to which "
+"status you want to move this card"
+msgstr "esta lista tiene múltiples estados asociados a ella, por favor, seleccione "
+"a qué estado quieres mover el tópico"
+
+#: public/bundle.js
+msgid "Please Select"
+msgstr "Por favor, seleccione"
+
+#: public/bundle.js
+msgid "checking job deployments"
+msgstr "Comprobando despliegues"
+
+#: public/bundle.js
+msgid "No jobs to deploy"
+msgstr "Sin pases para desplegar"
+
+#: public/bundle.js
+msgid "Error"
+msgstr "Error"
+
+#: public/bundle.js
+msgid "Status"
+msgstr "Estado"
+
+#: public/bundle.js
+msgid "Create New Board"
+msgstr "Crear nuevo Tablero"
+
+#: public/bundle.js
+msgid "Are you sure you want to delete this board?"
+msgstr "¿Estás seguro de querer eliminar este tablero?"
+
+#: public/bundle.js
+msgid "Delete"
+msgstr "Eliminar"
+
+#: public/bundle.js
+msgid ""
+"This is a temporary board, when you click save, it will be saved permanently "
+"in database"
+msgstr "Esto es un tablero temporal, cuando selecciones Guardar, se guardará permanentemente "
+"en base de datos"
+
+#: public/bundle.js
+msgid "Save"
+msgstr "Guardar"
+
+#: public/bundle.js
+msgid "Share With"
+msgstr "Compartir con"
+
+#: public/bundle.js
+msgid "Projects"
+msgstr "Proyectos"
+
+#: public/bundle.js
+msgid "Statuses"
+msgstr "Estados"
+
+#: public/bundle.js
+msgid "Labels"
+msgstr "Etiquetas"
+
+#: public/bundle.js
+msgid "Created On"
+msgstr "Creado"
+
+#: public/bundle.js
+msgid "From"
+msgstr ""
+
+#: public/bundle.js
+msgid "To"
+msgstr ""
+
+#: public/bundle.js
+msgid "Modified On"
+msgstr "Modificado"
+
+#: public/bundle.js
+msgid "WIP"
+msgstr "WIP"
+
+#: public/bundle.js
+msgid "Map Statuses"
+msgstr "Mapeo de Estados"
+
+#: public/bundle.js
+msgid "New List"
+msgstr "Nueva Lista"
+
+#: public/bundle.js
+msgid "General Settings"
+msgstr "Configuración General"
+
+#: public/bundle.js
+msgid "Lists"
+msgstr "Listas"
+
+#: public/bundle.js
+msgid "Quick View"
+msgstr "Vista Rápida"
+
+#: public/bundle.js
+msgid "Cards Per List"
+msgstr "Tarjetas por Lista"
+
+#: public/bundle.js
+msgid "Collapse Empty Lists"
+msgstr "Colapsar Listas vacías"
+
+#: public/bundle.js
+msgid "Collapse All Lists"
+msgstr "Colapsar Todas las Listas"
+
+#: public/bundle.js
+msgid "Collapse All SwimLanes"
+msgstr "Colapsar todos los SwimLanes"
+
+#: public/bundle.js
+msgid "Quick Filters"
+msgstr "Filtros Rápidos"
+
+#: public/bundle.js
+msgid "Clear"
+msgstr "Limpiar"
+
+#: public/bundle.js
+msgid "Created By"
+msgstr "Creado por"
+
+#: public/bundle.js
+msgid "Assigned To"
+msgstr "Asignado a"
+
+#: public/bundle.js
+msgid "Add %1 Selected To Board"
+msgstr "Añadir %1 seleccionados al Tablero"
+
+#: public/bundle.js
+msgid "Delete %1 Selected From Board"
+msgstr "Eliminar %1 seleccionados al Tablero"
+
+#: public/bundle.js
+msgid "Deploy To"
+msgstr "Desplegar a"
+
+#: public/bundle.js
+msgid "Select a Project"
+msgstr "Selecciona un proyecto"
+
+#: public/bundle.js
+msgid ""
+"this topic has multiple projects associated with it, please select one or all"
+msgstr "este tópico tiene varios proyectos asociados, por favor seleccione uno o todos"
+
+#: public/bundle.js
+msgid "Scopes"
+msgstr "Ámbitos"
+
+#: public/bundle.js
+msgid ""
+"It's mandatory to add comments explaining why this job is outside any time "
+"slots"
+msgstr "Es obligatorio añadir algún comentario explicando porque este pase se ejecutará "
+"fuera de ventana"
+
+#: public/bundle.js
+msgid "Success"
+msgstr "Éxito"
+
+#: public/bundle.js
+msgid "There are no projects related with the changesets"
+msgstr "No hay proyectos asociados a los changesets"
+
+#: public/bundle.js
+msgid "Outside Window"
+msgstr "Fuera de Ventana"
+
+#: public/bundle.js
+msgid "Normal"
+msgstr "Normal"
+
+#: public/bundle.js
+msgid "Urgent"
+msgstr "Urgente"
+
+#: public/bundle.js
+msgid "Transitions"
+msgstr "Transiciones"
+
+#: public/bundle.js
+msgid "Pipelines"
+msgstr "Cadenas de pase"
+
+#: public/bundle.js
+msgid "Version"
+msgstr "Versión"
+
+#: public/bundle.js
+msgid "Dynamic tags (calculated during execution)"
+msgstr "Etiquetas dinámicas (calculadas durante la ejecución"
+
+#: public/bundle.js
+msgid "When"
+msgstr "Cuando"
+
+#: public/bundle.js
+msgid "Date"
+msgstr "Fecha"
+
+#: public/bundle.js
+msgid "Comment"
+msgstr "Comentario"
+
+#: public/bundle.js
+msgid "Submit"
+msgstr "Confirmar"
+
+#: public/bundle.js
+msgid "cards hidden"
+msgstr "tarjetas ocultas"
+
+#: public/bundle.js
+msgid "Nothing Here, Start By Configuring Your Board Lists Statuses"
+msgstr "Nada por aquí, Comience configurando la lista de estados desde Configuración"
+
+#: public/bundle.js
+msgid "board with id %1 is not found"
+msgstr "tablero con el id %1 no encontrado"
+
+#: public/bundle.js
+msgid "Everything Else"
+msgstr "Todo lo demás"
+
+#: public/bundle.js
+msgid "No Results Found"
+msgstr "No se han encontrado resultados"
+
+#: public/bundle.js
+msgid "Apply"
+msgstr "Aplicar"
+
+#: public/bundle.js
+msgid "Create"
+msgstr "Crear"

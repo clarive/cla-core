@@ -1,0 +1,6 @@
+- Ability to add custom cards to static boards
+- Custom swimlanes
+- Custom filter fields from fieldlets
+- Ability to save quick filters for each user
+- Add dates to quick filters
+- Add custom filter to plan mode

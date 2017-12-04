@@ -1,0 +1,339 @@
+@primary-color: #9b4dca;
+
+.minutes-slider {
+    &.N {
+        .ant-slider-track {
+            background: #42BE80 !important;
+        }
+
+        .ant-slider-handle {
+            border: solid 2px #42BE80 !important;
+        }
+    }
+
+    &.F {
+        .ant-slider-track {
+            background: gray !important;
+        }
+
+        .ant-slider-handle {
+            border: solid 2px gray !important;
+        }
+    }
+
+    &.U {
+        .ant-slider-track {
+            background: #F04134 !important;
+        }
+
+        .ant-slider-handle {
+            border: solid 2px #F04134 !important;
+        }
+    }
+
+    .ant-slider-mark {
+        top: 3px;
+    }
+    margin-bottom: 35px;
+}
+
+.job-label {
+    font-weight: bold;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.kanban-container {
+
+   /* ::-webkit-scrollbar {
+        all:unset;
+    }*/
+
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    font-family: "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+    }
+
+    h2 {
+        font-size: 18px !important;
+    }
+
+    .right {
+        float: right;
+    }
+
+    .left {
+        float: left;
+    }
+
+    .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .header {
+        position:absolute;
+        overflow:hidden;
+        top:0;
+        left:0;
+        right:0;
+        height:65px;
+        border-bottom:1px solid #ccc;
+    }
+
+    .body {
+        position:absolute;
+        overflow:auto;
+        top:66px;
+        bottom:0;
+        left:0;
+        right:0;
+
+        &.with-side-bar {
+            right: 350px;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            &.left {
+                right: 0;
+                left: 350px;
+            }
+        }
+    }
+
+    .side-bar {
+        position:absolute;
+        overflow:hidden;
+        overflow-y: auto;
+        top:66px;
+        bottom:0;
+        right:0;
+        width: 350px;
+        padding: 20px;
+        background-color: #fff;
+        border-left: 1px solid #ccc;
+
+        &.left {
+            bottom:0;
+            left:0;
+            border-right: 1px solid #ccc;
+        }
+    }
+
+
+    .kanban-header {
+        position: relative;
+        width: 100%;
+        background-color: #eee;
+    }
+
+    .kanban-body {
+
+    }
+
+    .kanban {
+        background-color: #fff;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flexbox;
+        display: -o-flex;
+        display: flex;
+    }
+
+    /*.swimlane {
+        position: relative;
+        width: 100%;
+    }*/
+
+
+    .swim {
+        width: 100%;
+        padding: 10px;
+        background-color: #eee;
+        cursor: pointer;
+
+        &.collapsed {
+            border-bottom: 1px solid #ccc;
+        }
+    }
+
+    .kanban-body .list {
+        border-top: 1px solid #ccc;
+    }
+
+    .list {
+        float: left;
+        overflow: hidden;
+        width: 100%;
+        min-width: 240px;
+        flex: 1;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        padding: 5px;
+        background-color: #fff;
+        transition: background-color 60ms linear;
+
+
+        &:first-child {
+            border-left: 1px solid #ccc;
+        }
+
+        .head {
+            padding: 15px 0;
+            overflow: hidden;
+            width: 100%;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .total {
+            margin-right: 6px;
+            margin-left: 6px;
+            padding: 0px 5px;
+            background: #888;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 11px;
+        }
+
+        .wip {
+            margin-left: 6px;
+            margin-right: 6px;
+            padding: 0px 5px;
+            background: #2EB398;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 11px;
+        }
+
+        &.wip-alert .wip {
+            background: #FF6C60;
+        }
+
+        .content {
+            min-height: 100px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        &.collapsed {
+            width: 40px;
+            max-width: 40px !important;
+            min-width: 40px !important;
+            padding: 0;
+
+            .collapsed-content {
+                background-color: #eee;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+                cursor: pointer;
+
+                span {
+                    -ms-writing-mode: tb-lr;
+                    writing-mode: vertical-lr;
+                    line-height: 40px;
+                    padding-top: 20px;
+                }
+            }
+        }
+    }
+
+    .card {
+        cursor: pointer;
+        background-color: #f8f8f8;
+        border: 1px solid #eee;
+        margin: 5px auto;
+        padding: 10px;
+        overflow: hidden;
+
+        &.selected {
+            border-color: @primary-color;
+        }
+
+        .card-issue {
+            padding: 0px 5px;
+            font-size: 10px;
+            color: #222;
+            width: auto;
+            border-bottom: 5px solid;
+        }
+
+        .card-title {
+            padding-top: 30px;
+        }
+
+        .card-status {
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 10px;
+            float: left;
+            width: auto;
+            border-left: 2px solid #ddd;
+            padding-left: 10px;
+            width: 100%;
+        }
+    }
+
+    /*Drag place holder*/
+    .card-placeholder {
+        width: 100%;
+        display: block;
+        border-top: 2px dashed #ccc;
+        border-bottom: 2px dashed #ccc;
+    }
+
+    .plan {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+
+        .topic {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+    }
+
+    .kanban-boards {
+        h3 {
+            border-bottom: 1px solid #ccc;
+            padding: 5px;
+        }
+    }
+
+    .boards-list {
+        li {
+            float: left;
+
+            a {
+                padding: 10px;
+                display: block;
+                border: 1px solid #ccc;
+                margin: 5px;
+            }
+        }
+    }
+}

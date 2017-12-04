@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <meta charset="UTF-8">
+        <title>Kanbans</title>
+        <script src="/i18n/js?v=1"></script>
+        <script type="text/javascript" src="/static/require/require.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <link rel="stylesheet" href="/topicadmin/categories.css" >
+    </head>
+
+    <body>
+        <div id="kanban-comp"></div>
+        <script>
+            require.config({
+                paths: {
+                    react: '/static/lib/react.min',
+                    'react-dom': '/static/lib/react-dom.min',
+                    antd: '/static/lib/antd.min',
+                }
+            });
+
+            require(['/plugin/kanban/bundle.js'], function(kanban){
+                kanban.build();
+            });
+        </script>
+    </body>
+</html>
