@@ -32,11 +32,18 @@ import Layout from 'components/Layout/Layout.jsx';
     }
 
     handleChange (v) {
-        this.props.DataStore.updateSwimLanes(v);
+        if (!v) {
+            const { ViewStore, DataStore } = this.props;
+            Configure(ViewStore, DataStore, 'swimlanes');
+        } else {
+            this.props.DataStore.updateSwimLanes(v);
+        }
     }
 
     render() {
         const { ViewStore, DataStore } = this.props;
+
+        const seperatorStype =  { borderTop: '1px solid #eee', padding: 0 }
 
         return (
             <Menu
@@ -59,7 +66,7 @@ import Layout from 'components/Layout/Layout.jsx';
                     {   !!DataStore.isAdmin &&
                         <Button
                         icon="edit"
-                        onClick={ Configure.bind(this, ViewStore, DataStore) }
+                        onClick={ () => Configure(ViewStore, DataStore) }
                         style={{ margin: '0 2px', paddingLeft: '10px' }} type="primary">{ _("Configure") }</Button>
                     }
                 </Menu.Item>
@@ -75,20 +82,30 @@ import Layout from 'components/Layout/Layout.jsx';
 
                 <Menu.Item key="app" style={{ width: '250px', border: 0 }}>
                     <Select
-                        style={{ margin: '5px', width: '100%' }}
-                        defaultValue={ DataStore.currentSwimLane.key ? DataStore.currentSwimLane.key : 'no swimlanes' }
+                        showSearch
+                        optionFilterProp="string"
                         size="large"
+                        style={{ margin: '5px', width: '100%' }}
+                        value={ DataStore.currentSwimLane.id ? DataStore.currentSwimLane.id : 'no swimlanes' }
                         onChange={this.handleChange}
                     >
                         <Option value="no swimlanes">{ _("No Swimlanes") }</Option>
-                        <Option style={{ borderTop: '1px solid #eee', padding: 0 }} value={'sep-1' + Math.random() } disabled={true} ></Option>
-                        <Option value="Creator">{ _("Creator") }</Option>
-                        <Option value="Categories">{ _("Categories") }</Option>
-                        <Option style={{ borderTop: '1px solid #eee', padding: 0 }} value={'sep-1' + Math.random() } disabled={true} ></Option>
+                        <Option style={ seperatorStype } value={'sep-1' + Math.random() } disabled={true} ></Option>
+                        <Option value="creator">{ _("Creator") }</Option>
+                        <Option value="categories">{ _("Categories") }</Option>
+                        <Option style={ seperatorStype } value={'sep-1' + Math.random() } disabled={true} ></Option>
 
-                        { DataStore.customSwimLaneFields.map( (field, i) =>
-                            <Option key={field.name} value={field.name}>{ field.name }</Option>
+                        { DataStore.customSwimLanes.map( (swim, i) =>
+                            <Option
+                                string={ swim.name + swim.name.toLowerCase() }
+                                key={ swim.id }
+                            >
+                                { swim.name }
+                            </Option>
                         )}
+
+                        <Option style={ seperatorStype } value={'sep-1' + Math.random() } disabled={true} ></Option>
+                        <Option style={{ background: '#eee', color: '#888', textAlign: 'center' }} value="">{ _("Configure Swimlanes") }</Option>
                     </Select>
                     <Popover placement="bottom" content={<View />} trigger="click">
                         <Button size="large">

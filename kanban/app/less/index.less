@@ -51,6 +51,10 @@
                                   supported by Chrome and Opera */
 }
 
+.category-selector .ant-select-selection__choice {
+    padding: 0 20px 0 0 !important;
+}
+
 .kanban-container {
 
    /* ::-webkit-scrollbar {
@@ -151,7 +155,9 @@
     }
 
     .kanban-body {
-
+        .kanban {
+            min-height: 100px;
+        }
     }
 
     .kanban {
@@ -334,6 +340,17 @@
                 border: 1px solid #ccc;
                 margin: 5px;
             }
+        }
+    }
+
+    .configure-panel {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        padding: 20px 0 20px 40px;
+
+        .ant-tabs-tabpane {
+            padding-right: 30px;
         }
     }
 }

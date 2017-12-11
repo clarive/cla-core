@@ -1,3 +1,8 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: modules/api/board.js
 msgid "Temporary Board"
 msgstr "Tablero Temporal"
@@ -17,6 +22,14 @@ msgstr "tablero no encontrado"
 #: modules/api/topic.js
 msgid "You don't have permission to change topic value of '%1'"
 msgstr "No tienes permiso para cambiar el valor del tópico de '%1'"
+
+#: public/bundle.js
+msgid "Not Found"
+msgstr "No encontrado"
+
+#: public/bundle.js
+msgid "Please select"
+msgstr "Por favor, seleccione"
 
 #: public/bundle.js
 msgid "Filter"
@@ -43,6 +56,10 @@ msgid "Categories"
 msgstr "Categorías"
 
 #: public/bundle.js
+msgid "Configure Swimlanes"
+msgstr "Configurar Swimlanes"
+
+#: public/bundle.js
 msgid "View"
 msgstr "Ver"
 
@@ -51,8 +68,8 @@ msgid "Create New Kanban Board"
 msgstr "Crear nuevo Tablero Kanban"
 
 #: public/bundle.js
-msgid "Ok"
-msgstr "Ok"
+msgid "Create"
+msgstr "Crear"
 
 #: public/bundle.js
 msgid "Cancel"
@@ -79,72 +96,6 @@ msgid "Static"
 msgstr "Estático"
 
 #: public/bundle.js
-msgid "Not Found"
-msgstr "No encontrado"
-
-#: public/bundle.js
-msgid "Please select"
-msgstr "Por favor, seleccione"
-
-#: public/bundle.js
-msgid "Select a Status"
-msgstr "Seleccione un estado"
-
-#: public/bundle.js
-msgid ""
-"this list has multiple statuses associated with it, please select to which "
-"status you want to move this card"
-msgstr "esta lista tiene múltiples estados asociados a ella, por favor, seleccione "
-"a qué estado quieres mover el tópico"
-
-#: public/bundle.js
-msgid "Please Select"
-msgstr "Por favor, seleccione"
-
-#: public/bundle.js
-msgid "checking job deployments"
-msgstr "Comprobando despliegues"
-
-#: public/bundle.js
-msgid "No jobs to deploy"
-msgstr "Sin pases para desplegar"
-
-#: public/bundle.js
-msgid "Error"
-msgstr "Error"
-
-#: public/bundle.js
-msgid "Status"
-msgstr "Estado"
-
-#: public/bundle.js
-msgid "Create New Board"
-msgstr "Crear nuevo Tablero"
-
-#: public/bundle.js
-msgid "Are you sure you want to delete this board?"
-msgstr "¿Estás seguro de querer eliminar este tablero?"
-
-#: public/bundle.js
-msgid "Delete"
-msgstr "Eliminar"
-
-#: public/bundle.js
-msgid ""
-"This is a temporary board, when you click save, it will be saved permanently "
-"in database"
-msgstr "Esto es un tablero temporal, cuando selecciones Guardar, se guardará permanentemente "
-"en base de datos"
-
-#: public/bundle.js
-msgid "Save"
-msgstr "Guardar"
-
-#: public/bundle.js
-msgid "Share With"
-msgstr "Compartir con"
-
-#: public/bundle.js
 msgid "Projects"
 msgstr "Proyectos"
 
@@ -162,15 +113,51 @@ msgstr "Creado"
 
 #: public/bundle.js
 msgid "From"
-msgstr ""
+msgstr "Desde"
 
 #: public/bundle.js
 msgid "To"
-msgstr ""
+msgstr "Hasta"
 
 #: public/bundle.js
 msgid "Modified On"
 msgstr "Modificado"
+
+#: public/bundle.js
+msgid "Create New Board"
+msgstr "Crear nuevo Tablero"
+
+#: public/bundle.js
+msgid "Are you sure you want to delete this board?"
+msgstr "¿Estás seguro de querer eliminar este tablero?"
+
+#: public/bundle.js
+msgid "Delete"
+msgstr "Eliminar"
+
+#: public/bundle.js
+msgid ""
+"This is a temporary board, when you click save, it will be saved permanently "
+"in database"
+msgstr ""
+"Esto es un tablero temporal, cuando selecciones Guardar, se guardará "
+"permanentemente en base de datos"
+
+#: public/bundle.js
+msgid "Save"
+msgstr "Guardar"
+
+#: public/bundle.js
+msgid "General Settings"
+msgstr "Configuración General"
+
+#: public/bundle.js
+msgid "Lists"
+msgstr "Listas"
+
+#: public/bundle.js
+msgid "Swimlanes"
+msgstr ""
 
 #: public/bundle.js
 msgid "WIP"
@@ -185,12 +172,56 @@ msgid "New List"
 msgstr "Nueva Lista"
 
 #: public/bundle.js
-msgid "General Settings"
-msgstr "Configuración General"
+msgid "Share With"
+msgstr "Compartir con"
 
 #: public/bundle.js
-msgid "Lists"
-msgstr "Listas"
+msgid "Everything Else"
+msgstr "Todo lo demás"
+
+#: public/bundle.js
+msgid "Swimlane value name can not be empty"
+msgstr "El nombre del Swimlane no puede estar vacío"
+
+#: public/bundle.js
+msgid "Swimlane Name"
+msgstr "Nombre del Swimlane"
+
+#: public/bundle.js
+msgid "Show uncategorized topics"
+msgstr "Mostrar tópicos sin categorizar"
+
+#: public/bundle.js
+msgid "At Top"
+msgstr "Al principio"
+
+#: public/bundle.js
+msgid "At Bottom"
+msgstr "Al final"
+
+#: public/bundle.js
+msgid "View All Possible Values"
+msgstr "Ver todos los posibles valores"
+
+#: public/bundle.js
+msgid "Customize Swimlane Values"
+msgstr "Personalizar los valores del Swimlane"
+
+#: public/bundle.js
+msgid "Add New Value"
+msgstr "Añadir nuevo valor"
+
+#: public/bundle.js
+msgid "Swimlane name can not be empty"
+msgstr "El nombre del Swimlane no puede estar vacío"
+
+#: public/bundle.js
+msgid "Default View"
+msgstr "Vista por defecto"
+
+#: public/bundle.js
+msgid "Add New Swimlane From Field"
+msgstr "Añadir nuevo Swimlane desde el Campo"
 
 #: public/bundle.js
 msgid "Quick View"
@@ -237,8 +268,65 @@ msgid "Delete %1 Selected From Board"
 msgstr "Eliminar %1 seleccionados al Tablero"
 
 #: public/bundle.js
+msgid "Status"
+msgstr "Estado"
+
+#: public/bundle.js
+msgid "No Results Found"
+msgstr "No se han encontrado resultados"
+
+#: public/bundle.js
+msgid "Apply"
+msgstr "Aplicar"
+
+#: public/bundle.js
+msgid "cards hidden"
+msgstr "tarjetas ocultas"
+
+#: public/bundle.js
+msgid "Nothing Here, Start By Configuring Your Board Lists Statuses"
+msgstr ""
+"Nada por aquí, Comience configurando la lista de estados desde Configuración"
+
+#: public/bundle.js
+msgid "Select a Status"
+msgstr "Seleccione un estado"
+
+#: public/bundle.js
+msgid "Ok"
+msgstr "Ok"
+
+#: public/bundle.js
+msgid ""
+"this list has multiple statuses associated with it, please select to which "
+"status you want to move this card"
+msgstr ""
+"esta lista tiene múltiples estados asociados a ella, por favor, seleccione a "
+"qué estado quieres mover el tópico"
+
+#: public/bundle.js
+msgid "Please Select"
+msgstr "Por favor, seleccione"
+
+#: public/bundle.js
+msgid "checking job deployments"
+msgstr "Comprobando despliegues"
+
+#: public/bundle.js
+msgid "No jobs to deploy"
+msgstr "Sin pases para desplegar"
+
+#: public/bundle.js
+msgid "Error"
+msgstr "Error"
+
+#: public/bundle.js
 msgid "Deploy To"
 msgstr "Desplegar a"
+
+#: public/bundle.js
+msgid "All"
+msgstr "Todos"
 
 #: public/bundle.js
 msgid "Select a Project"
@@ -247,7 +335,9 @@ msgstr "Selecciona un proyecto"
 #: public/bundle.js
 msgid ""
 "this topic has multiple projects associated with it, please select one or all"
-msgstr "este tópico tiene varios proyectos asociados, por favor seleccione uno o todos"
+msgstr ""
+"este tópico tiene varios proyectos asociados, por favor seleccione uno o "
+"todos"
 
 #: public/bundle.js
 msgid "Scopes"
@@ -257,8 +347,9 @@ msgstr "Ámbitos"
 msgid ""
 "It's mandatory to add comments explaining why this job is outside any time "
 "slots"
-msgstr "Es obligatorio añadir algún comentario explicando porque este pase se ejecutará "
-"fuera de ventana"
+msgstr ""
+"Es obligatorio añadir algún comentario explicando porque este pase se "
+"ejecutará fuera de ventana"
 
 #: public/bundle.js
 msgid "Success"
@@ -313,29 +404,5 @@ msgid "Submit"
 msgstr "Confirmar"
 
 #: public/bundle.js
-msgid "cards hidden"
-msgstr "tarjetas ocultas"
-
-#: public/bundle.js
-msgid "Nothing Here, Start By Configuring Your Board Lists Statuses"
-msgstr "Nada por aquí, Comience configurando la lista de estados desde Configuración"
-
-#: public/bundle.js
 msgid "board with id %1 is not found"
 msgstr "tablero con el id %1 no encontrado"
-
-#: public/bundle.js
-msgid "Everything Else"
-msgstr "Todo lo demás"
-
-#: public/bundle.js
-msgid "No Results Found"
-msgstr "No se han encontrado resultados"
-
-#: public/bundle.js
-msgid "Apply"
-msgstr "Aplicar"
-
-#: public/bundle.js
-msgid "Create"
-msgstr "Crear"

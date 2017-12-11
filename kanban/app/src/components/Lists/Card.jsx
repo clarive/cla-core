@@ -141,6 +141,7 @@ const cardSource = {
             status: card.id_category_status
         }).done( (data) => {
 
+            if (data.error) return;
             if ( currentDragEnded ) return;
 
             data.forEach(function(d){

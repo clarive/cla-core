@@ -505,6 +505,80 @@ exports.topics = function(req, res, user) {
 };
 
 
+/*
+    api: board/parent_topics
+    returns an object of topics mids with their parents for a specific
+    list_topics fieldlet
+ */
+exports.topic_parents = function(req, res, user) {
+    var field = req.param('field');
+    var mids  = JSON.parse( req.param('mids') );
+
+    var query = {
+        rel_type: 'topic_topic',
+        rel_field: field
+    };
+
+    if (mids.length) {
+        query.from_mid = db.in( mids )
+    }
+
+    var rel = {};
+    db.getCollection('master_rel').find(query).fields({
+        _id: 0,
+        from_mid: 1,
+        to_mid: 1
+    }).all().map(function(data){
+        rel[ data.to_mid ] = data.from_mid;
+    });
+
+    return rel;
+};
+
+
+exports.search_topics = function(req, res, user) {
+    var text = req.param('text');
+    var page = req.param('page');
+    var query = JSON.parse(  req.param('query') );
+
+    var sort = {};
+
+    if (query.categories.length) {
+        query.id_category = db.in( query.categories );
+    }
+
+    if (query.topics.length) {
+        query.mid = db.nin( query.topics );
+    }
+
+    delete query.categories;
+    delete query.topics;
+
+    if (text) {
+        query['$text'] = { $search: text };
+        sort.score = { $meta: "textScore" };
+    } else {
+        sort.modified_on = -1;
+    }
+
+    var results = db.getCollection('topic').find(query).fields({
+        score : { $meta: "textScore" },
+        _id: 0,
+        title: 1,
+        mid: 1,
+        id_category: 1
+    }).sort(sort).skip((page - 1) * 5);
+
+    var count = results.count();
+    var results = results.limit(5).all();
+
+    return {
+        total: count,
+        topics: results
+    };
+};
+
+
 function _updateTopicsWithSort(id, topics) {
     kanbanDB.update({
         id: id

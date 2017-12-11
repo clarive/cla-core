@@ -40,19 +40,34 @@ function fetchCategories (cb) {
             store.categoryById[category.id] = category;
             store.categories.push(category);
 
-            category.form.forEach(function(form){
-                if (form.key === 'fieldlet.system.users'
-                    || form.key === 'fieldlet.system.release'
-                    || form.key === 'fieldlet.number'
-                    || form.key === 'fieldlet.combo'
-                    || form.key === 'fieldlet.pills'
-                    || form.key === 'fieldlet.datetime' ) {
+            category.form.forEach(function(field){
 
-                    store.fields[ form.name_field ] = store.fields[ form.name_field ] || {
-                        type: form.key,
+                if (field.key === 'fieldlet.system.users'
+                    || field.key === 'fieldlet.system.release'
+                    || field.key === 'fieldlet.number'
+                    || field.key === 'fieldlet.combo'
+                    || field.key === 'fieldlet.pills'
+                    || ( field.key === 'fieldlet.system.list_topics' && field.parent_field )
+                ) {
+
+                    let options = [];
+                    if (field.key === 'fieldlet.pills') {
+                        options = (field.options || "").split(";").map( (opt) => {
+                            return (opt || '').split(',')[0];
+                        });
+                    } else if ( field.key === 'fieldlet.combo' ) {
+                        options = (field.options || "").split(",");
+                    }
+
+                    store.fields[ field.name_field ] = store.fields[ field.name_field ] || {
+                        meta: { ...field },
+                        categories: field.categories,
+                        options: options,
+                        type: field.key,
+                        name: field.name_field,
                         categoryFieldId : {}
                     };
-                    store.fields[ form.name_field ].categoryFieldId[ category.id ] = form.id_field;
+                    store.fields[ field.name_field ].categoryFieldId[ category.id ] = field.id_field;
                 }
             });
         });

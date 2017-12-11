@@ -23,6 +23,8 @@ exports.related_changesets = function(req, res, user) {
         }
     );
 
+    relatedTopics = Array.isArray( relatedTopics ) ? relatedTopics : [relatedTopics];
+
     var changesets = relatedTopics.map(function(topic) {
         return topic.mid
     })

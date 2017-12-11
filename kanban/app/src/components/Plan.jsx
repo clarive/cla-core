@@ -6,7 +6,7 @@ import { Pagination, Button, Icon } from 'antd';
 const ButtonGroup = Button.Group;
 
 import api from 'lib/api';
-import { deepCopy } from 'lib/utils';
+import { deepCopy, setTopicProjects } from 'lib/utils';
 
 import store from 'stores/StaticStore';
 
@@ -146,7 +146,10 @@ import BasicFilter from 'components/Filter/Basic.jsx';
         }).done( (data) => {
 
             localStore.total = data.total;
-            localStore.topics = data.topics;
+            localStore.topics = data.topics.map( (topic) => {
+                setTopicProjects( topic );
+                return topic;
+            });
 
             localStore.current = Number(data.page);
             localStore.loading = false;
@@ -167,8 +170,10 @@ import BasicFilter from 'components/Filter/Basic.jsx';
     }
 
     projects = (card) => {
-        if (!card._project_security) return '';
-        const projects = card._project_security.project.map( (id, i) => store.projectById[id].name )
+        const projects = card.__projects.map( (id, i) => {
+            return store.projectById[id] ? store.projectById[id].name : ''
+        })
+
         return ' ' + projects.join(', ')
     }
 
@@ -248,7 +253,11 @@ import BasicFilter from 'components/Filter/Basic.jsx';
                                     <div className="card-title">{ card.title }</div>
                                     <div className="card-options">
                                         <div className="card-status">
-                                            { _("Status") }: { store.statusById[card.id_category_status].name }
+                                            { _("Status") }: {
+                                                store.statusById[card.id_category_status] ?
+                                                    store.statusById[card.id_category_status].name :
+                                                    ''
+                                            }
                                         </div>
                                         <div className="card-status">
                                             { _("Projects") }: { this.projects(card) }

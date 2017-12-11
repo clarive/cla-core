@@ -7,7 +7,12 @@ import PropTypes from 'prop-types';
 const CategoryLabel = (props) => {
     const card = props.card;
     return <span id="boot" className="left">
-        <span className={ 'label category-label category-' + card.id_category }>{ store.categoryById[card.id_category].acronym } { ' #' + card.mid }</span>
+        <span className={ 'label category-label category-' + card.id_category }>
+            { store.categoryById[card.id_category] ?
+                store.categoryById[card.id_category].acronym :
+                ''
+            } { ' #' + card.mid }
+        </span>
     </span>
 }
 

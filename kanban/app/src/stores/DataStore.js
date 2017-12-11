@@ -2,7 +2,7 @@ import { autorun, computed, observable, action } from 'mobx';
 import React from "react";
 
 import api from 'lib/api';
-import { dynamicSort } from "lib/utils.js";
+import { dynamicSort, setTopicProjects } from "lib/utils.js";
 
 import store from 'stores/StaticStore';
 
@@ -17,15 +17,33 @@ const filterObj = {
     createdBy: ""
 };
 
-const defaultSwimLanesMap = {
-    'no swimlanes' : {
-        field: 'no swimlanes'
+const defaultSwimLanesMap = [
+    {
+        name: 'no swimlanes',
+        id: 'no swimlanes',
+        field: 'no swimlanes',
+        all: 1,
+        everything: {
+            enable: 1,
+            position: 'bottom'
+        },
+        meta : {}
     },
-    'Creator' : {
+    {
+        name: 'Creator',
+        id: 'creator',
         field: 'created_by',
+        all: 1,
+        everything: {
+            enable: 1,
+            position: 'bottom'
+        },
+        meta: {},
         canMove: false
     },
-    'Categories' : {
+    {
+        name: 'Categories',
+        id: 'categories',
         field: 'id_category',
         formatter (swimlanes, callback) {
             swimlanes.forEach( (swimlane) => {
@@ -35,9 +53,15 @@ const defaultSwimLanesMap = {
             });
             callback(swimlanes);
         },
+        all: 1,
+        everything: {
+            enable: 1,
+            position: 'bottom'
+        },
+        meta: {},
         canMove: false
     }
-}
+]
 
 const quickFilterObj = {
     categories : [],
@@ -46,6 +70,13 @@ const quickFilterObj = {
     statuses: [],
     assignedTo: []
 };
+
+const openTopic = (mid) => {
+    if (typeof Cla !== "undefined") {
+        Cla.ui.tab.openTopic(mid);
+        return;
+    }
+}
 
 const Formatters = {
     'fieldlet.system.users' : function(swimlanes, callback){
@@ -86,32 +117,35 @@ const Formatters = {
 
         callback(swimlanes);
     },
-    'fieldlet.system.release' : function(swimlanes, callback){
-        const mids = swimlanes.map( (s) => s.name );
+    'fieldlet.system.list_topics' : function(swimlanes, callback){
+        const mids = swimlanes.map( (s) => s.value );
         api.post('board/topicsbymid', {
             mids: JSON.stringify( mids )
         }).done( (data) => {
-            const newSwimlanes = [];
             data.forEach((topic)=> {
-                const swim = swimlanes.find( (s) => s.name === topic.mid );
+                const swim = swimlanes.find( (s) => s.value == topic.mid );
+                if (!swim) return;
                 swim.name = <span>
-                    <span style={{
-                        background: topic.category_color,
-                        padding: '5px',
-                        margin: '3px 5px 3px 0',
-                        display: 'block',
-                        border: '2px solid #fff',
-                        float: 'left'
-                    }}></span>
-                    <span style={{ display: 'block'}}> { topic.title } </span>
+                    <span
+                        style={{
+                            background: topic.category_color,
+                            padding: '5px',
+                            margin: '3px 5px 3px 0',
+                            display: 'block',
+                            border: '2px solid #fff',
+                            float: 'left'
+                        }}
+                        onClick={ (e) => { e.stopPropagation(); openTopic(topic.mid) } }
+                    ></span>
+                    <span> { topic.title } </span>
                 </span>;
-                newSwimlanes.push(swim);
             });
-
             callback(swimlanes);
         });
     }
 }
+
+Formatters['fieldlet.system.release'] = Formatters['fieldlet.system.list_topics'];
 
 class DataStore {
 
@@ -119,37 +153,37 @@ class DataStore {
         this.ClaStore = ClaStore;
         this.ViewStore = ViewStore;
 
+        // this will tell us if parent field already
+        // requested from master_rel if
+        // this.parentFieldRequested[ parent_field_id ] = 1
+        this.parentFieldRequested = {};
+
         // temprary boards filter
         this.tempFilter = undefined;
 
-        // what we are doing here?
-        // this function runs automatically when ever we set a new category
-        // in the filters, we have fields in swimlanes and by default fields
-        // collected from all categories, but when we have certain categories
-        // we only need fields in those categories
         autorun ( () => {
-            const categories = this.filter.categories.length ?
-                this.filter.categories : store.categories.map( (cat) => cat.id );
 
-            if (categories.length) {
-                // build custom Fiedls for the available categories only
-                this.customSwimLaneFields = [];
-                const arr = [];
-                Object.keys( store.fields ).sort().forEach( (key) => {
-                    const field = store.fields[key];
-                    const hasField = categories.find( (id) => !!field.categoryFieldId[id] );
-                    if (hasField) {
-                        arr.push({
-                            name: key,
-                            categoryFieldId: field.categoryFieldId,
-                            type: field.type,
-                            formatter: Formatters[field.type],
-                            canMove: true
-                        });
-                    }
+            const swimlanes = this.swimlanesSettings;
+            this.customSwimLanes = [];
+            let arr = [];
+            swimlanes.forEach( (swimlane) => {
+
+                const field = store.fields[swimlane.fieldId];
+
+                // do some notification for user here?
+                // a missmatch field with swimlanes
+                if (!field) return;
+
+                arr.push({
+                    ...swimlane,
+                    meta: { ...field.meta },
+                    categoryFieldId: field.categoryFieldId,
+                    formatter: swimlane.all ? Formatters[field.type] : null,
+                    canMove: true
                 });
-                setTimeout ( () => { this.customSwimLaneFields = arr });
-            }
+            });
+
+            setTimeout ( () => { this.customSwimLanes = arr });
         })
     }
 
@@ -193,11 +227,13 @@ class DataStore {
 
     @observable unMappedStatuses = [];
 
-    @observable customSwimLaneFields = [];
+    @observable customSwimLanes = [];
 
     // for dragging cards
     @observable changeCardSort = [-1, -1];
     @observable changeCardStatus = [];
+
+    @observable swimlanesSettings =  [];
 
     // ========================  ACTIONS ===========================
 
@@ -239,6 +275,10 @@ class DataStore {
 
             this.filter = board.settings.filter;
 
+            this.swimlanesSettings = Array.isArray( board.settings.swimlanes ) ?
+                board.settings.swimlanes :
+                [];
+
             if (this.ClaStore && this.ClaStore.onLoad) {
                 this.ClaStore.onLoad(board);
             }
@@ -253,10 +293,14 @@ class DataStore {
 
         // get custom fields to load
         const customFields = {};
-        this.customSwimLaneFields.forEach( (field) => {
-            Object.keys(field.categoryFieldId).forEach( (id) => {
-                customFields[ field.categoryFieldId[id] ] = 1;
-            })
+        this.customSwimLanes.forEach( (swimlane) => {
+            // avoid loading these fields because we are going
+            // to request them later from master_rel
+            if ( swimlane.meta.rel_type !== 'topic_topic' ) {
+                Object.keys(swimlane.categoryFieldId).forEach( (id) => {
+                    customFields[ swimlane.categoryFieldId[id] ] = 1;
+                })
+            }
         });
 
         api.post('board/topics', {
@@ -265,6 +309,7 @@ class DataStore {
             fields: JSON.stringify( Object.keys(customFields) ),
             filters: this.id === 'temp' ? JSON.stringify(this.filter) : 0
         }).done( (lists) => {
+
             this.lists = [];
             lists.forEach( (list, i) => {
                 list.collapsed = list.collapsed ? 1 : 0;
@@ -283,29 +328,66 @@ class DataStore {
                 this.lists[i].total = list.total;
             });
 
-            this.updateSwimLanes( this.currentSwimLane.key ? this.currentSwimLane.key : 'no swimlanes');
+            if (!this.currentSwimLane.id) {
+                this.currentSwimLane = this.customSwimLanes.find( (swim) => swim.default == 1 ) || {};
+            }
+
+            this.updateSwimLanes();
             this.ViewStore.loading(false);
             this.loaded = true;
         });
     }
 
-    @action updateSwimLanes (swimlane: string) {
+    @action updateSwimLanes (swimlaneId: string) {
+
+        if (!swimlaneId) {
+            swimlaneId = this.currentSwimLane.id ? this.currentSwimLane.id : 'no swimlanes';
+        }
 
         this.ViewStore.loading();
 
+        let swimlane = defaultSwimLanesMap.find( (swim) => swim.id === swimlaneId ) ||
+            this.customSwimLanes.find( (swim) => swim.id === swimlaneId ) ||
+            defaultSwimLanesMap.find( (swim) => swim.id === 'no swimlanes' );
+
+        this.currentSwimLane = swimlane;
+
+        // if the requested swimlane is a parent child type
+        // we need one more request to fetch relation from master_rel
+        const field = swimlane.meta.parent_field || swimlane.meta.release_field;
+        if ( swimlane.meta && field && !this.parentFieldRequested[field] ) {
+
+            api.post('board/topic_parents', {
+                field: field,
+                mids: JSON.stringify ( swimlane.all ? [] : swimlane.values.map((v) => v.value) )
+            }).done( (data) => {
+
+                this.lists.forEach( (list, index) => {
+                    list.cards.forEach( (card) => {
+                        card[ swimlane.meta.id_field ] = data[ card.mid ];
+                    })
+                })
+
+                // mark this field as already fetched so we don't
+                // have to request again, field data already attached
+                // to each card by now
+                this.parentFieldRequested[field] = 1;
+
+                // we have the swimlane data now, run update swimlanes
+                this.updateSwimLanes();
+            })
+            return;
+        }
+
         setTimeout( () => {
-
-            let key = swimlane;
-            swimlane = defaultSwimLanesMap[swimlane] ||
-                this.customSwimLaneFields.find( (field) => field.name === key );
-
-            swimlane.key = key;
-
-            this.currentSwimLane = swimlane;
 
             const formatter = swimlane.formatter;
             let field = swimlane.field;
-            const everythingText = swimlane.everythingText || _("Everything Else")
+
+            const everythingKey = Math.random();
+            const everythingEnabled  = swimlane.everything.enable;
+            const everythingText = swimlane.everything.text || _("Everything Else");
+            const everythingPosition  = swimlane.everything.position;
 
             let swimlanes = {};
 
@@ -314,22 +396,26 @@ class DataStore {
 
                 cards.forEach( (card, i) => {
 
-                    field = field || swimlane.categoryFieldId[ card.id_category ];
+                    setTopicProjects( card );
+
+                    if (swimlane.categoryFieldId){
+                        field = swimlane.categoryFieldId[ card.id_category ];
+                    }
 
                     if (this.quickFilter.categories.length) {
-                        if (this.quickFilter.categories.indexOf( card.id_category ) === -1){
+                        if (this.quickFilter.categories.indexOf( card.id_category ) === -1) {
                             return;
                         }
                     }
 
                     if (this.quickFilter.statuses.length) {
-                        if (this.quickFilter.statuses.indexOf( card.id_category_status ) === -1){
+                        if (this.quickFilter.statuses.indexOf( card.id_category_status ) === -1) {
                             return;
                         }
                     }
 
                     if (this.quickFilter.createdBy.length) {
-                        if (this.quickFilter.createdBy.indexOf( card.created_by ) === -1){
+                        if (this.quickFilter.createdBy.indexOf( card.created_by ) === -1) {
                             return;
                         }
                     }
@@ -349,12 +435,30 @@ class DataStore {
                         }
                     }
 
-                    const value = card[field];
-                    const key = (value === undefined || value == '') ? everythingText : value;
+                    let value = card[field];
+                    let key = everythingKey;
+
+                    // array? only allow array values with single value
+                    // to be listed in swimlanes
+                    if (value != null && typeof value === 'object') {
+                        if (value.length === 1) {
+                            value = value[0];
+                        } else {
+                            value = "";
+                        }
+                    }
+
+                    if ( value === 0 || ( value != "" && value ) ) {
+                        if (swimlane.all == 1 || swimlane.values.some((v) => v.value == value)) {
+                            key = value;
+                        }
+                    }
 
                     swimlanes[key] = swimlanes[key] || {
-                        total: 0,
+                        name: key,
                         value: value,
+                        total: 0,
+                        collapsed: 0,
                         lists: this.lists.map( () => {
                             return {
                                 cards: [],
@@ -364,34 +468,54 @@ class DataStore {
                         })
                     }
 
-                    if (!swimlanes[key].lists[index]) swimlanes[key].lists[index] = [];
+                    swimlanes[key].lists[index] = swimlanes[key].lists[index] || [];
                     swimlanes[key].lists[index].cards.push(card);
                     swimlanes[key].total++;
                 });
             });
 
-            const arr = Object.keys(swimlanes).map( (key, i) => {
-                const swim = swimlanes[key];
-                return {
-                    name: key,
-                    value: swim.value,
-                    lists: swim.lists,
-                    total: swim.total,
-                    collapsed: 0
-                };
-            });
+            const everythingLane = swimlanes[everythingKey];
+            if (everythingLane) everythingLane.name = everythingText;
+            delete swimlanes[everythingKey];
 
-            // remove everything to put last at the end after sorting all swimlanes
-            const everthingIndex = arr.findIndex((o) => o.name === everythingText);
-            let everything = [];
-            if (everthingIndex !== -1) {
-                everything = arr.splice( everthingIndex, 1 );
+            let arr = [];
+            if ( !swimlane.all && swimlane.values ) {
+                swimlane.values.forEach( (val) => {
+                    const value = val.value;
+                    const name = val.name;
+                    if (swimlanes[value]) {
+                        const v = swimlanes[value];
+                        v.name = name;
+                        delete swimlanes[value];
+                        arr.push( v );
+                    } else {
+                        // push an empty swimlane
+                        arr.push({
+                            name: name, value: value, total: 0, collapsed: 0,
+                            lists: this.lists.map( () => {
+                                return {
+                                    cards: [],
+                                    cardsPerList: 0,
+                                    canDrop: 0
+                                }
+                            })
+                        });
+                    }
+                });
+            } else {
+                arr = Object.keys(swimlanes).map( (key, i) => {
+                    return swimlanes[key];
+                });
             }
 
             const sortSwimlanes = (newArr) => {
-                this.swimLanes.replace( newArr.sort(dynamicSort('name')) );
-                if (everthingIndex !== -1) {
-                    this.swimLanes.push( everything[0] )
+                this.swimLanes.replace( newArr );
+                if (everythingEnabled && everythingLane ) {
+                    if (everythingPosition === 'top') {
+                        this.swimLanes.unshift( everythingLane );
+                    } else {
+                        this.swimLanes.push( everythingLane );
+                    }
                 }
                 this.ViewStore.loading(false);
             }
@@ -418,7 +542,7 @@ class DataStore {
 
     @action clearQuickFilters () {
         this.quickFilter = quickFilterObj;
-        this.updateSwimLanes( this.currentSwimLane.key );
+        this.updateSwimLanes();
     }
 
     @computed get hasQuickFilter() {
@@ -446,7 +570,7 @@ class DataStore {
     }
 
     @computed get noSwimlanes() {
-        return this.currentSwimLane && this.currentSwimLane.key === 'no swimlanes'
+        return this.currentSwimLane && this.currentSwimLane.id === 'no swimlanes'
     }
 
     // reset current board data
@@ -455,7 +579,7 @@ class DataStore {
         this.swimLanes = [];
         this.lists = [];
         this.filter = filterObj;
-        this.currentSwimLane = {};
+        this.parentFieldRequested = {};
     }
 
     @action deleteBoard () {

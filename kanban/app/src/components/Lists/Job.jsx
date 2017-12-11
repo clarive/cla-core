@@ -24,7 +24,7 @@ const FormItem = Form.Item;
 const { TextArea } = Input;
 
 import api from 'lib/api';
-import { deepCopy } from 'lib/utils';
+import { deepCopy, setTopicProjects } from 'lib/utils';
 import store from 'stores/StaticStore.js';
 import { CategoryLabel, LoadingMask } from "components/UI.jsx";
 
@@ -83,7 +83,7 @@ const ProjectsModal = inject('ViewStore')(observer( (props) => {
     }
 
     scopes = (card) => {
-        const scopes = card._project_security.project.map( (id, i) => store.projectById[id].name )
+        const scopes = card.__projects.map( (id, i) => store.projectById[id].name )
         return ' ' + scopes.join(', ')
     }
 
@@ -316,8 +316,8 @@ const typeLabels = {
     componentDidMount () {
         const { ViewStore, card, job } = this.props;
 
-        this.projects = card._project_security.project;
-        this.project = card._project_security.project[0];
+        this.projects = deepCopy( card.__projects );
+        this.project  = this.projects[0];
 
         const updateProjects = (selectedProjects) => {
             if (selectedProjects === 'all') {
@@ -327,7 +327,7 @@ const typeLabels = {
                 this.project = selectedProjects;
 
                 this.localStore.jobItems = this.localStore.jobItems.filter( (item) => {
-                    return item._project_security.project.indexOf(this.project) !== -1;
+                    return item.__projects.indexOf(this.project) !== -1 || item === card;
                 });
             }
 
@@ -337,7 +337,7 @@ const typeLabels = {
 
         const selectProjectOrLoadJob = () => {
             // multiple projects!! lets select one or all
-            if (this.projects.length > 0 && card.is_release == 1) {
+            if (this.projects.length > 1 && card.is_release == 1) {
                 ViewStore.modal(<ProjectsModal cancel={ this.props.cancel } projects={this.projects} updateProjects={updateProjects} />);
             } else {
                 updateProjects( this.projects[ this.projects.length -1 ] );
@@ -352,7 +352,8 @@ const typeLabels = {
             }).done( (data) => {
                 this.localStore.jobItems = data.map( (cs) => {
                     // push changeset projects to project lists
-                    cs._project_security.project.forEach( (project) => {
+                    setTopicProjects( cs );
+                    cs.__projects.forEach( (project) => {
                         if (this.projects.indexOf(project) === -1) {
                             this.projects.push(project);
                         }

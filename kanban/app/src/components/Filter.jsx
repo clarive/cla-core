@@ -29,7 +29,7 @@ import {
     handleChange (type, val) {
         const { DataStore } = this.props;
         DataStore.quickFilter[type] = val;
-        setTimeout ( () => { DataStore.updateSwimLanes( DataStore.currentSwimLane.key ) }, 100 );
+        setTimeout ( () => { DataStore.updateSwimLanes() }, 100 );
     }
 
     close () {

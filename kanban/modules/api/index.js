@@ -47,7 +47,7 @@ exports.categories = function(req, res, user) {
     categories.forEach(function(cat) {
         cat.form = [];
         if (!cat.default_form) return;
-        cat.form = cla.model('Topic').getFieldletsFromDefaultForm(cat.default_form);
+        cat.form = cla.model('Topic').getMeta( '', cat.id, user.username() );
     });
 
     return categories || [];

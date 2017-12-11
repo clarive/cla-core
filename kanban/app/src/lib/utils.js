@@ -68,4 +68,26 @@ function dynamicSort(property) {
     }
 }
 
-export { deepCopy, dates, dynamicSort }
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
+
+// TODO: better way to set projects of topics;
+function setTopicProjects (topic) {
+    topic.__projects = topic._project_security && topic._project_security.project ?
+        topic._project_security.project :
+        [];
+}
+
+export { debounce, deepCopy, dates, dynamicSort, setTopicProjects }
