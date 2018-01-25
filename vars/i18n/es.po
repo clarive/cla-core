@@ -1,0 +1,144 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: init/var-controllers.js
+msgid "Variables"
+msgstr ""
+
+#: init/var-controllers.js
+msgid "Not authorized to view variables"
+msgstr "No autorizado para ver variables"
+
+#: init/var-controllers.js
+msgid "Variable %1 not found"
+msgstr "Variable %1 no encontrada"
+
+#: public/components/var-admin.js
+msgid "Edit Variable"
+msgstr "Editar Variable"
+
+#: public/components/var-admin.js
+msgid "New Variable"
+msgstr "Nueva Variable"
+
+#: public/components/var-admin.js
+msgid "Save"
+msgstr "Guardar"
+
+#: public/components/var-admin.js
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: public/components/var-admin.js
+msgid "Variable"
+msgstr ""
+
+#: public/components/var-admin.js
+msgid "Please enter variable name"
+msgstr "Por favor introduzca el nombre de la variable"
+
+#: public/components/var-admin.js
+msgid "Variable Name"
+msgstr "Nombre de la Variable"
+
+#: public/components/var-admin.js
+msgid "Type"
+msgstr "Tipo"
+
+#: public/components/var-admin.js
+msgid "Please select variable type"
+msgstr "Por favor, seleccione el tipo de variable"
+
+#: public/components/var-admin.js
+msgid "Variable type"
+msgstr "Tipo de Variable"
+
+#: public/components/var-admin.js
+msgid "Text"
+msgstr "Texto"
+
+#: public/components/var-admin.js
+msgid "Secret"
+msgstr "Contraseña"
+
+#: public/components/var-admin.js
+msgid "Plain Text Value"
+msgstr "Valor en texto plano"
+
+#: public/components/var-admin.js
+msgid "Value"
+msgstr "Valor"
+
+#: public/components/var-admin.js
+msgid "Secret Value"
+msgstr "Valor de la contraseña"
+
+#: public/components/var-admin.js
+msgid "Projects"
+msgstr "Proyectos"
+
+#: public/components/var-admin.js
+msgid "Select a Project"
+msgstr "Seleccione el Proyecto"
+
+#: public/components/var-admin.js
+msgid "Environments"
+msgstr "Entornos"
+
+#: public/components/var-admin.js
+msgid "Select an Environment"
+msgstr "Seleccione un Entorno"
+
+#: public/components/var-admin.js
+msgid "Deleted variable %1"
+msgstr "Variable %1 eliminada"
+
+#: public/components/var-admin.js
+msgid "Copied variable %1"
+msgstr "Variable %1 copiada"
+
+#: public/components/var-admin.js
+msgid "Error saving variable: %1"
+msgstr "Error guardandado la variable: %1"
+
+#: public/components/var-admin.js
+msgid "[all]"
+msgstr "[todo]"
+
+#: public/components/var-admin.js
+msgid "Action"
+msgstr "Acción"
+
+#: public/components/var-admin.js
+msgid "Edit"
+msgstr "Editar"
+
+#: public/components/var-admin.js
+msgid "Copy"
+msgstr "Copiar"
+
+#: public/components/var-admin.js
+msgid "Delete"
+msgstr "Borrar"
+
+#: public/components/var-admin.js
+msgid "Delete Variable %1"
+msgstr "Eliminar Variable %1"
+
+#: public/components/var-admin.js
+msgid "Yes"
+msgstr "Si"
+
+#: public/components/var-admin.js
+msgid "No"
+msgstr ""
+
+#: public/components/var-admin.js
+msgid "search"
+msgstr "buscar"
+
+#: public/components/var-admin.js
+msgid "Create"
+msgstr "Crear"
