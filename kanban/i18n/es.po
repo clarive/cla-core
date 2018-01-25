@@ -32,6 +32,46 @@ msgid "Please select"
 msgstr "Por favor, seleccione"
 
 #: public/bundle.js
+msgid "Save Current Board"
+msgstr "Salvar Tablero Actual"
+
+#: public/bundle.js
+msgid "Create New Kanban Board"
+msgstr "Crear Nuevo Tablero Kanban"
+
+#: public/bundle.js
+msgid "Save"
+msgstr "Guardar"
+
+#: public/bundle.js
+msgid "Create"
+msgstr "Crear"
+
+#: public/bundle.js
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: public/bundle.js
+msgid "Board Name"
+msgstr "Nombre del Tablero"
+
+#: public/bundle.js
+msgid "Board Name Required"
+msgstr "Nombre del Tablero Obligatorio"
+
+#: public/bundle.js
+msgid "Board Type"
+msgstr "Tipo de Tablero"
+
+#: public/bundle.js
+msgid "Dynamic"
+msgstr "Dinámico"
+
+#: public/bundle.js
+msgid "Static"
+msgstr "Estático"
+
+#: public/bundle.js
 msgid "Filter"
 msgstr "Filtro"
 
@@ -40,8 +80,12 @@ msgid "Configure"
 msgstr "Configurar"
 
 #: public/bundle.js
-msgid "Plan Mode"
-msgstr "Modo Plan"
+msgid "Save Board"
+msgstr "Guardar Tablero"
+
+#: public/bundle.js
+msgid "Add to Board"
+msgstr "Añadir a Tablero"
 
 #: public/bundle.js
 msgid "No Swimlanes"
@@ -64,36 +108,48 @@ msgid "View"
 msgstr "Ver"
 
 #: public/bundle.js
-msgid "Create New Kanban Board"
-msgstr "Crear nuevo Tablero Kanban"
+msgid "Board settings have changed"
+msgstr "La configuración del tablero ha cambiado"
 
 #: public/bundle.js
-msgid "Create"
-msgstr "Crear"
+msgid "Are you sure you want to close without saving any changes?"
+msgstr "¿Está seguro de querer cerrar sin guardar ningún cambio?"
 
 #: public/bundle.js
-msgid "Cancel"
-msgstr "Cancelar"
+msgid "Yes"
+msgstr "Sí"
 
 #: public/bundle.js
-msgid "Board Name"
-msgstr "Nombre del Tablero"
+msgid "No"
+msgstr "No"
 
 #: public/bundle.js
-msgid "Board Name Required"
-msgstr "Nombre del Tablero obligatorio"
+msgid "Are you sure you want to delete this board?"
+msgstr "¿Está seguro de querer eliminar este tablero?"
 
 #: public/bundle.js
-msgid "Board Type"
-msgstr "Tipo de Tablero"
+msgid "Delete"
+msgstr "Eliminar"
 
 #: public/bundle.js
-msgid "Dynamic"
-msgstr "Dinámico"
+msgid "Save Changes"
+msgstr "Guardar Cambios"
 
 #: public/bundle.js
-msgid "Static"
-msgstr "Estático"
+msgid "When done, switch off Live Preview to save changes"
+msgstr "Una vez hecho, desconectar Live Preview para guardar cambios"
+
+#: public/bundle.js
+msgid "General Settings"
+msgstr "Configuración General"
+
+#: public/bundle.js
+msgid "Lists"
+msgstr "Listas"
+
+#: public/bundle.js
+msgid "Swimlanes"
+msgstr "Swimlanes"
 
 #: public/bundle.js
 msgid "Projects"
@@ -128,38 +184,6 @@ msgid "Create New Board"
 msgstr "Crear nuevo Tablero"
 
 #: public/bundle.js
-msgid "Are you sure you want to delete this board?"
-msgstr "¿Estás seguro de querer eliminar este tablero?"
-
-#: public/bundle.js
-msgid "Delete"
-msgstr "Eliminar"
-
-#: public/bundle.js
-msgid ""
-"This is a temporary board, when you click save, it will be saved permanently "
-"in database"
-msgstr ""
-"Esto es un tablero temporal, cuando selecciones Guardar, se guardará "
-"permanentemente en base de datos"
-
-#: public/bundle.js
-msgid "Save"
-msgstr "Guardar"
-
-#: public/bundle.js
-msgid "General Settings"
-msgstr "Configuración General"
-
-#: public/bundle.js
-msgid "Lists"
-msgstr "Listas"
-
-#: public/bundle.js
-msgid "Swimlanes"
-msgstr ""
-
-#: public/bundle.js
 msgid "WIP"
 msgstr "WIP"
 
@@ -172,8 +196,27 @@ msgid "New List"
 msgstr "Nueva Lista"
 
 #: public/bundle.js
-msgid "Share With"
-msgstr "Compartir con"
+msgid "Board name is required"
+msgstr "El nombre del tablero es obligatorio"
+
+#: public/bundle.js
+msgid "Share With Users"
+msgstr "Compartir con Usuarios"
+
+#: public/bundle.js
+msgid "Share With Groups"
+msgstr "Compartir con Grupos"
+
+#: public/bundle.js
+msgid "Note"
+msgstr "Nota"
+
+#: public/bundle.js
+msgid ""
+"In static boards, filters are used as the default filters of the plan mode, "
+"they will not affect cards showing in your board"
+msgstr "En tableros estáticos, los filtros son usados como filtros por defecto del modo plan, "
+"no afectarán a las tarjetas mostradas en su tablero"
 
 #: public/bundle.js
 msgid "Everything Else"
@@ -182,6 +225,10 @@ msgstr "Todo lo demás"
 #: public/bundle.js
 msgid "Swimlane value name can not be empty"
 msgstr "El nombre del Swimlane no puede estar vacío"
+
+#: public/bundle.js
+msgid "Live Preview"
+msgstr "Live Preview"
 
 #: public/bundle.js
 msgid "Swimlane Name"
@@ -250,6 +297,10 @@ msgstr "Filtros Rápidos"
 #: public/bundle.js
 msgid "Clear"
 msgstr "Limpiar"
+
+#: public/bundle.js
+msgid "Title"
+msgstr "Título"
 
 #: public/bundle.js
 msgid "Created By"
@@ -406,3 +457,16 @@ msgstr "Confirmar"
 #: public/bundle.js
 msgid "board with id %1 is not found"
 msgstr "tablero con el id %1 no encontrado"
+
+#~ msgid "Plan Mode"
+#~ msgstr "Modo Plan"
+
+#~ msgid ""
+#~ "This is a temporary board, when you click save, it will be saved "
+#~ "permanently in database"
+#~ msgstr ""
+#~ "Esto es un tablero temporal, cuando selecciones Guardar, se guardará "
+#~ "permanentemente en base de datos"
+
+#~ msgid "Share With"
+#~ msgstr "Compartir con"

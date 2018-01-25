@@ -76,7 +76,7 @@ import BasicFilter from 'components/Filter/Basic.jsx';
         const { ViewStore, DataStore, localStore } = this.props;
 
         return (
-            <div style={{ margin: '15px', 'marginLeft' : '18px' }}>
+            <div style={{ padding: '14px 9px'}}>
                 <Button  style={{ margin: '2px' }}
                     className="left" onClick={ this.close.bind(this) }>
                     <Icon type="close" />
@@ -91,8 +91,8 @@ import BasicFilter from 'components/Filter/Basic.jsx';
                 {   localStore.selected.length > 0 &&
                     <div className="left" style={{ marginLeft: '10px' }}>
                         <ButtonGroup style={{ margin: '2px', marginLeft: '10px' }}>
-                            <Button onClick={ this.clear.bind(this) }><Icon type="minus" /></Button>
-                            <Button type="primary" onClick={ this.addTopics.bind(this) }>
+                            <Button type="danger" ghost onClick={ this.clear.bind(this) }><Icon type="minus" /></Button>
+                            <Button type="primary" ghost onClick={ this.addTopics.bind(this) }>
                                 { _("Add %1 Selected To Board", localStore.selected.length ) }
                             </Button>
                         </ButtonGroup>
@@ -102,8 +102,8 @@ import BasicFilter from 'components/Filter/Basic.jsx';
                 {   DataStore.selectedCards.length > 0 &&
                     <div className="right" style={{ marginLeft: '10px' }}>
                         <ButtonGroup style={{ margin: '2px', marginLeft: '10px' }}>
-                            <Button onClick={ this.clearBoard.bind(this) }><Icon type="minus" /></Button>
-                            <Button type="primary" onClick={ this.removeTopics.bind(this) }>
+                            <Button type="danger" ghost onClick={ this.clearBoard.bind(this) }><Icon type="minus" /></Button>
+                            <Button type="primary" ghost onClick={ this.removeTopics.bind(this) }>
                                 { _("Delete %1 Selected From Board", DataStore.selectedCards.length ) }
                             </Button>
                         </ButtonGroup>
@@ -312,10 +312,11 @@ import BasicFilter from 'components/Filter/Basic.jsx';
                             { _("Cancel") }
                         </Button>
                         <Button
-                            type="primary"
                             size="large"
                             onClick={ this.applyNewFilter.bind(this) }
                             style={{ display: 'inline-block' }}
+                            type="primary"
+                            ghost
                         >
                             { _("Apply") }
                         </Button>

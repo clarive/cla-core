@@ -22,17 +22,9 @@ ci.createClass("Kanban", {
 
             var user = this.user();
 
-            var query = {
-                $or: [{
-                    creator: user
-                }, {
-                    'settings.users': user
-                }, {
-                    'settings.administrators': user
-                }]
-            };
+            var query = kanbanDB.query(user);
 
-            var boards = kanbanDB.find(query).fields({ _id: 0, name: 1, id: 1 }).all();
+            var boards = kanbanDB.collection.find(query).fields({ _id: 0, name: 1, id: 1 }).all();
             return boards;
         }
     }

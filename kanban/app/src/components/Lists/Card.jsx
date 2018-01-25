@@ -228,41 +228,45 @@ const cardSource = {
                 };
             }
 
-            ViewStore.loading(true);
+            // update card status & value
+                card.id_category_status = status;
+                if (field !== null) card[ field ] = toSwimLane.value;
+
+                const fromSwimLaneList = fromSwimLane.lists[ target.from.listIndex ];
+                const toSwimLaneList = toSwimLane.lists[ target.to.listIndex ];
+
+                // update swimlanes
+                // 1-  remove card from the current swimlane
+                fromSwimLaneList.cards.splice( fromSwimLaneList.cards.indexOf(card), 1 );
+
+                // 2- add card to the new swimlane
+                toSwimLaneList.cards.unshift( card );
+
+                fromSwimLane.total--;
+                toSwimLane.total++;
+
+                // update lists
+                toList.total++;
+                fromList.total--;
+
+                fromList.cards.splice( fromList.cards.indexOf(card), 1 );
+                toList.cards.unshift( card );
+            // End updating the card
+
             api.post('topic/update', {
                 mid: card.mid,
                 status: card.id_category_status,
                 category: card.id_category,
                 update: JSON.stringify(updateObj)
             }).done( (data) => {
-                ViewStore.loading(false);
                 if (!data.success) {
                     Modal.error({
                         title: _("Error"),
                         content: data.msg
                     });
-                } else {
-                    // update card new data
-                    card.id_category_status = status;
-                    if (field !== null) card[ field ] = toSwimLane.value;
-
-                    // update swimlanes
-                    // 1-  remove card from the current swimlane
-                    const fromSwimLaneList = fromSwimLane.lists[ target.from.listIndex ];
-                    fromSwimLaneList.cards.splice( fromSwimLaneList.cards.indexOf(card), 1 );
-
-                    // 2- add card to the new swimlane
-                    toSwimLane.lists[ target.to.listIndex ].cards.unshift( card );
-
-                    fromSwimLane.total--;
-                    toSwimLane.total++;
-
-                    // update lists
-                    toList.total++;
-                    fromList.total--;
-
-                    fromList.cards.splice( fromList.cards.indexOf(card), 1 );
-                    toList.cards.unshift( card );
+                    // on errors reload lists to
+                    // reset card back to it's place
+                    ViewStore.reloadLists();
                 }
             });
             ViewStore.modal(null);

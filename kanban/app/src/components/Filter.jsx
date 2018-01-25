@@ -1,12 +1,14 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
+import { observable } from 'mobx';
 
-import { Icon, Select, Button, Form, InputNumber } from 'antd';
-const Option = Select.Option;
+import { Icon, Select, Button, Form, InputNumber, Input } from 'antd';
 const FormItem = Form.Item;
+const Search = Input.Search;
 
 import api from 'lib/api';
 import store from 'stores/StaticStore';
+import { debounce } from "lib/utils.js";
 
 import {
     SelectList,
@@ -26,6 +28,25 @@ import {
         this.handleChange = this.handleChange.bind(this);
     }
 
+    @observable id = 0;
+
+    debounceTitleSearch = debounce( (value) => {
+        const { DataStore } = this.props;
+        DataStore.quickFilter.searchText = value.length ? new RegExp(value, "i") : "";
+        setTimeout ( () => { DataStore.updateSwimLanes() }, 100 );
+    }, 300);
+
+    onTextSearch = (e) => {
+        const { value } = e.target;
+        this.debounceTitleSearch( value )
+    }
+
+    clearFilters = () => {
+        const { DataStore } = this.props;
+        this.id++; // force layout re-rendering
+        DataStore.clearQuickFilters();
+    }
+
     handleChange (type, val) {
         const { DataStore } = this.props;
         DataStore.quickFilter[type] = val;
@@ -39,6 +60,7 @@ import {
     render() {
         const { DataStore } = this.props;
 
+        const defaultTextSearch = DataStore.quickFilter.searchText;
         const selectedCats = DataStore.quickFilter.categories.toJS();
         const selectedLabels = DataStore.quickFilter.labels.toJS();
         const selectedStatuses = DataStore.quickFilter.statuses.toJS();
@@ -47,8 +69,7 @@ import {
         const selectedCreatedBy = DataStore.quickFilter.createdBy.toJS();
 
         return (
-
-            <div key={ DataStore.hasQuickFilter ? 1 : 2 }>
+            <div key={ this.id }>
                 <div style={{ overflow: 'hidden' }}>
 
                     <div style={{ float: 'left', paddingTop: '3px', paddingRight: '10px' }}>
@@ -60,7 +81,7 @@ import {
                     <h2 style={{ float: 'left' }}>{ _('Quick Filters') }</h2>
                     <div style={{ float: 'right' }}>
                         {
-                            !!DataStore.hasQuickFilter && <Button onClick={ () => DataStore.clearQuickFilters() }>
+                            !!DataStore.hasQuickFilter && <Button onClick={ this.clearFilters }>
                                 <Icon type="minus" /> { _("Clear") }
                             </Button>
                         }
@@ -69,6 +90,14 @@ import {
 
                 <br />
                 <Form layout="vertical">
+
+                    <FormItem label={ _("Title") } >
+                        <Search
+                            defaultValue={defaultTextSearch}
+                            onChange={ this.onTextSearch }
+                        />
+                    </FormItem>
+
                     <FormItem label={ _("Categories") } >
                         <SelectCategories
                             defaultValue={selectedCats}

@@ -175,7 +175,13 @@ const dragTarget = {
 
         return (
             <div>
-                <Button onClick={ this.createNewList } style={{ margin: '10px 2px' }} type="primary" icon="plus">
+                <Button
+                    onClick={ this.createNewList }
+                    style={{ margin: '10px 2px' }}
+                    type="primary"
+                    icon="plus"
+                    ghost
+                >
                     { _("New List") }
                 </Button>
 

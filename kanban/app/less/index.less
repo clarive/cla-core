@@ -1,44 +1,51 @@
 @primary-color: #9b4dca;
 
-.minutes-slider {
-    &.N {
-        .ant-slider-track {
-            background: #42BE80 !important;
+.kanban-job-window {
+    .minutes-slider {
+        &.N {
+            .ant-slider-track {
+                background: #42BE80 !important;
+            }
+
+            .ant-slider-handle {
+                border: solid 2px #42BE80 !important;
+            }
         }
 
-        .ant-slider-handle {
-            border: solid 2px #42BE80 !important;
+        &.F {
+            .ant-slider-track {
+                background: gray !important;
+            }
+
+            .ant-slider-handle {
+                border: solid 2px gray !important;
+            }
         }
+
+        &.U {
+            .ant-slider-track {
+                background: #F04134 !important;
+            }
+
+            .ant-slider-handle {
+                border: solid 2px #F04134 !important;
+            }
+        }
+
+        .ant-slider-mark {
+            top: 3px;
+        }
+
+        margin-bottom: 35px;
     }
 
-    &.F {
-        .ant-slider-track {
-            background: gray !important;
-        }
-
-        .ant-slider-handle {
-            border: solid 2px gray !important;
-        }
+    .ant-slider-mark-text {
+        padding-top: 7px;
     }
 
-    &.U {
-        .ant-slider-track {
-            background: #F04134 !important;
-        }
-
-        .ant-slider-handle {
-            border: solid 2px #F04134 !important;
-        }
+    .job-label {
+        font-weight: bold;
     }
-
-    .ant-slider-mark {
-        top: 3px;
-    }
-    margin-bottom: 35px;
-}
-
-.job-label {
-    font-weight: bold;
 }
 
 .noselect {
@@ -53,13 +60,13 @@
 
 .category-selector .ant-select-selection__choice {
     padding: 0 20px 0 0 !important;
+    border-radius: 5px;
+    #boot .label.category-label {
+        padding: 8px;
+    }
 }
 
 .kanban-container {
-
-   /* ::-webkit-scrollbar {
-        all:unset;
-    }*/
 
     box-sizing: border-box;
 
@@ -98,6 +105,12 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
     }
 
     .header {
@@ -351,6 +364,13 @@
 
         .ant-tabs-tabpane {
             padding-right: 30px;
+        }
+    }
+
+    .swim-values {
+        margin-top: 10px;
+        .ant-form-item-control {
+            line-height: 1.5;
         }
     }
 }

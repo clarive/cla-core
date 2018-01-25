@@ -90,4 +90,8 @@ function setTopicProjects (topic) {
         [];
 }
 
-export { debounce, deepCopy, dates, dynamicSort, setTopicProjects }
+function isEmpty(str) {
+    return !str.replace(/^\s+/g, '').length;
+}
+
+export { isEmpty, debounce, deepCopy, dates, dynamicSort, setTopicProjects }

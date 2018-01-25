@@ -59,14 +59,15 @@ exports.categories = function(req, res, user) {
     returns all users
  */
 exports.users = function(req, res, user) {
-    var users = ci.find('user', {})
-        .fields({
-            mid: 1,
-            username: 1,
-            realname: 1,
-            _id: 0
-        })
-        .all();
+    var users = ci.find('user', {
+        active: { '$nin' : [undefined,'','0',0] },
+        account_type: { '$ne' : 'system' }
+    }).fields({
+        mid: 1,
+        username: 1,
+        realname: 1,
+        _id: 0
+    }).all();
 
     // adding avatar URL
     users.forEach(function(user) {

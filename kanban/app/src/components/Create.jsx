@@ -10,36 +10,39 @@ import Kanban from 'components/Kanban.jsx';
 
 const CollectionCreateForm = observer(Form.create()( (props) => {
 
-    const { visible, onCancel, onCreate, form } = props;
+    const { visible, onCancel, onCreate, form, DataStore } = props;
     const { getFieldDecorator } = form;
 
     return (
         <Modal
             visible={props.show}
-            title={ _("Create New Kanban Board") }
+            title={ DataStore.isTempBoard ? _("Save Current Board") : _("Create New Kanban Board") }
             onCancel={onCancel}
             onOk={onCreate}
-            okText={ _('Create') }
+            okText={ DataStore.isTempBoard ? _('Save') : _('Create') }
             cancelText={ _('Cancel') }
         >
             <Form layout="vertical">
 
                 <FormItem label={ _("Board Name") }>
                     {   getFieldDecorator('name', {
-                        rules: [{ required: true, message: _("Board Name Required") }],
+                        initialValue: DataStore.name,
+                        rules: [{ required: true, whitespace: true, message: _("Board Name Required") }],
                     })( <Input /> )}
                 </FormItem>
 
-                <FormItem label={ _("Board Type") }>
-                    {   getFieldDecorator('type', {
-                        initialValue: 'dynamic',
-                    })(
-                        <Radio.Group>
-                            <Radio value="dynamic">{ _("Dynamic") }</Radio>
-                            <Radio value="static">{ _("Static") }</Radio>
-                        </Radio.Group>
-                    )}
-                </FormItem>
+                { !DataStore.isTempBoard &&
+                    <FormItem label={ _("Board Type") }>
+                        {   getFieldDecorator('type', {
+                            initialValue: 'dynamic',
+                        })(
+                            <Radio.Group>
+                                <Radio value="dynamic">{ _("Dynamic") }</Radio>
+                                <Radio value="static">{ _("Static") }</Radio>
+                            </Radio.Group>
+                        )}
+                    </FormItem>
+                }
             </Form>
         </Modal>
     );
@@ -54,7 +57,13 @@ const CollectionCreateForm = observer(Form.create()( (props) => {
 
     handleCancel = (kanban) => {
 
-        const { ClaStore, ViewStore } = this.props;
+        const { ClaStore, ViewStore, DataStore } = this.props;
+
+        if (DataStore.isTempBoard) {
+            this.show = false;
+            ViewStore.modal(null);
+            return;
+        }
 
         if (!kanban.id) {
             if (ClaStore && ClaStore.onClose) {
@@ -72,24 +81,35 @@ const CollectionCreateForm = observer(Form.create()( (props) => {
     }
 
     handleCreate = () => {
+        const { DataStore, ViewStore } = this.props;
         const form = this.form;
+
         form.validateFields((err, values) => {
             if (err) return;
-            api.post('board/create', values).done( (kanban) => {
-                this.props.DataStore.boards.push(kanban);
-                form.resetFields();
-                this.handleCancel(kanban);
-            });
+
+            if (DataStore.isTempBoard) {
+                DataStore.saveBoard({
+                    name: values.name
+                }, (board) => {})
+            } else {
+                api.post('board/create', values).done( (kanban) => {
+                    this.props.DataStore.boards.push(kanban);
+                    form.resetFields();
+                    this.handleCancel(kanban);
+                });
+            }
         });
     }
 
     render() {
+        const { DataStore, ViewStore } = this.props;
         return (
             <CollectionCreateForm
                 show={ this.show }
                 ref={ (node) => this.form = node }
                 onCancel={this.handleCancel}
                 onCreate={this.handleCreate}
+                DataStore={DataStore}
             />
         );
     }

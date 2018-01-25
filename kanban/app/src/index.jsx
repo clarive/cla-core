@@ -11,8 +11,7 @@ import ViewStore from 'stores/ViewStore.js';
 import Create from 'components/Create.jsx';
 import Kanban from 'components/Kanban.jsx';
 
-import { LocaleProvider } from 'antd';
-import enUS from 'antd/lib/locale-provider/en_US';
+import { LocaleProvider, enUS, esES } from 'antd';
 
 import '../less/index.less';
 

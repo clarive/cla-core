@@ -15,7 +15,6 @@ const SelectList = observer( (props) => {
         optionFilterProp="string"
         allowClear={true}
         mode="multiple"
-        size="large"
         notFoundContent={ _("Not Found") }
         placeholder={ _("Please select") }
         style={{width: '100%', maxWidth: '100%' }}
@@ -68,10 +67,17 @@ const SelectLabels = observer( (props) => {
 const SelectUsers = observer( (props) => {
 
     const valueField = props.valueField || "mid";
+    const hideList   = props.hideList || [];
 
     const users = [];
     store.users.sort(dynamicSort('username')).forEach(function(user) {
-        users.push(<Option string={ user.username + user.realname } key={ user[valueField] }>{ user.username } ( {user.realname} )</Option>);
+        if ( hideList.indexOf(user.mid) === -1 ) {
+            users.push(
+                <Option string={ user.username + user.realname } key={ user[valueField] }>
+                    { user.username }  { user.realname.length > 0 && `( ${user.realname} )` }
+                </Option>
+            )
+        }
     });
 
     return <SelectList
@@ -80,6 +86,56 @@ const SelectUsers = observer( (props) => {
         { users }
     </SelectList>
 })
+
+
+@observer class SelectGroups extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    @observable request = {
+        loading: false,
+        data: []
+    };
+
+    componentDidMount () {
+        this.request.loading = true;
+        api.post('/usergroup/list', {
+            only_data: 1
+        }).done( (data) => {
+            this.request.loading = false;
+            this.request.data.replace( data || [] );
+        })
+    }
+
+    render() {
+
+        const options = this.request.data.map( group =>
+            <Option string={ group.groupname + group.groupname.toLowerCase() } key={group.mid}>
+                { group.groupname }
+            </Option>
+        )
+
+        return (
+            <SelectList
+                showSearch
+                notFoundContent= {
+                    this.request.loading ?
+                    <Spin
+                        className="center"
+                        style={{
+                            width: '100%',
+                            textAlign: 'center'
+                        }}
+                    /> : _("Not Found")
+                }
+                {...this.props}
+            >
+                { options }
+            </SelectList>
+        )
+    }
+}
 
 
 const SelectProjects = observer( (props) => {
@@ -215,4 +271,4 @@ const SelectStatuses = observer( (props) => {
     }
 }
 
-export { SelectList, SelectCategories, SelectLabels, SelectUsers, SelectProjects, SelectStatuses, SelectTopic }
+export { SelectList, SelectCategories, SelectLabels, SelectUsers, SelectGroups, SelectProjects, SelectStatuses, SelectTopic }

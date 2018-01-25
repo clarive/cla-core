@@ -1,19 +1,19 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
-import { observable } from 'mobx';
+import { autorunAsync, observable } from 'mobx';
 
 import { DropTarget, DragSource } from 'react-dnd';
 
-import { Input, InputNumber, Form, Button, Checkbox, Select, Icon } from 'antd';
+import { Switch, Badge, Input, InputNumber, Form, Button, Checkbox, Select, Icon } from 'antd';
 const FormItem = Form.Item;
 const InputGroup = Input.Group;
 const Option = Select.Option;
 
 import { generate as generateId } from "shortid";
-
-import { dynamicSort, deepCopy } from "lib/utils.js";
+import Configure from 'components/Configure.jsx';
+import { dynamicSort, deepCopy, isEmpty } from "lib/utils.js";
 import store from 'stores/StaticStore';
-import { SelectTopic } from 'components/FormItems/Select.jsx';
+import { SelectTopic, SelectUsers } from 'components/FormItems/Select.jsx';
 
 const defaultSwimLane = {
     type: '',
@@ -54,11 +54,6 @@ const isNumberField = (swim) => {
 const isNumber = (n) => {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
-
-const isEmpty = (str) => {
-    return !str.replace(/^\s+/g, '').length;
-}
-
 
 @observer class AddNewValue extends React.Component {
     constructor(props) {
@@ -135,21 +130,6 @@ const isEmpty = (str) => {
             typeof this.state.value === 'object' ||
             this.state.value.length > 0 ? false : true
 
-        if ( isUsersField(swimlane) ) {
-            store.users.sort(dynamicSort('username')).forEach(function(user) {
-                if ( swimlane.values.findIndex( (value) => value.value == user.mid ) === -1 ) {
-                    options.push(
-                        <Option
-                            string={ user.username + user.realname }
-                            key={ user.mid }
-                        >
-                            { user.username } ( {user.realname} )
-                        </Option>
-                    );
-                }
-            });
-        }
-
         if (field.type === 'fieldlet.pills' || field.type === 'fieldlet.combo') {
             field.options.sort().forEach(function(option) {
                 if ( swimlane.values.findIndex( (value) => value.value == option ) === -1 ) {
@@ -167,12 +147,11 @@ const isEmpty = (str) => {
 
         return (
             <div style={{ maxWidth: '100%', position: 'relative' }}>
-                { ( field.type === 'fieldlet.system.users' ||
-                    field.type === 'fieldlet.combo' ||
+                { ( field.type === 'fieldlet.combo' ||
                     field.type === 'fieldlet.pills' ) &&
                     <Select
-                        style={{ width: '100%' }}
                         showSearch
+                        style={{ width: '100%' }}
                         value={ this.state.value }
                         optionFilterProp="string"
                         notFoundContent={ _("Not Found") }
@@ -182,11 +161,22 @@ const isEmpty = (str) => {
                     </Select>
                 }
 
+                { field.type === 'fieldlet.system.users' &&
+                    <SelectUsers
+                        showSearch
+                        mode="single"
+                        value={ this.state.value }
+                        optionFilterProp="string"
+                        notFoundContent={ _("Not Found") }
+                        hideList={ swimlane.values.map( (v) => v.value ) }
+                        onChange={ this.handleChange }
+                    />
+                }
+
                 { field.meta.rel_type === 'topic_topic' &&
                     <SelectTopic
                         key={ this.state.id }
                         labelInValue
-                        size="default"
                         value={
                             !this.state.value ?
                             { key: '', label: '' } :
@@ -291,7 +281,7 @@ const valDragTarget = {
         return connectDragPreview(connectDropTarget(
             <li>
                 <FormItem
-                    style={{ marginBottom: '5px' }}
+                    style={{ marginBottom: 5 }}
                     {...validateProps}
                 >
                     <Input
@@ -339,10 +329,12 @@ const valDragTarget = {
     }
 }
 
-
+@inject("ViewStore")
+@inject("DataStore")
 @observer class Edit extends React.Component {
     constructor(props) {
         super(props);
+        this.oldBodyComp = null
     }
 
     updateName (e) {
@@ -360,6 +352,77 @@ const valDragTarget = {
         this.props.swimlane.everything.position = v;
     }
 
+    removeTempSwimlanes () {
+        const { DataStore } = this.props;
+        const index = DataStore.swimlanesSettings.findIndex((swim) => swim.id === 'temp')
+        if ( index !== -1 ) {
+            DataStore.swimlanesSettings.splice( index, 1 );
+        }
+    }
+
+    quickView = () => {
+        const { swimlane, ViewStore, DataStore } = this.props;
+
+        // create a temporary swimlane
+        const tempSwimlane = deepCopy( swimlane );
+        tempSwimlane.id = 'temp';
+
+        // make sure to remove previous temp swimlanes
+        this.removeTempSwimlanes();
+
+        DataStore.swimlanesSettings.push( tempSwimlane );
+
+        // view main board and update swimlanes
+        ViewStore.body(null);
+        setTimeout ( () => DataStore.updateSwimLanes('temp') );
+    }
+
+    setPreviewMode = (value) => {
+        const { localStore, DataStore, ViewStore } = this.props;
+        localStore.swimlaneLivePreview = value;
+
+        if (value === true) {
+            localStore.sideBar = ViewStore.sideBarComp;
+            localStore.dir = 'swimlanes'
+            this.quickView();
+        } else {
+            this.removeTempSwimlanes();
+            Configure(ViewStore, DataStore, 'swimlanes', localStore);
+            console.log( this.currentSwimlaneId );
+            setTimeout ( () => DataStore.updateSwimLanes(this.currentSwimlaneId) );
+        }
+    }
+
+    componentDidMount () {
+        const { swimlane, DataStore, ViewStore, localStore } = this.props;
+        this.currentSwimlaneId = DataStore.currentSwimLane ?
+            DataStore.currentSwimLane.id : 'no swimlanes';
+
+        // save old oby value
+        this.bodyComp = ViewStore.bodyComp;
+
+        let old = JSON.stringify( swimlane );
+
+        this.disposer = setInterval(() => {
+            if ( localStore.swimlaneLivePreview ) {
+
+                const newObj = JSON.stringify( localStore.currentEditableSwimlane );
+
+                if (old != newObj) {
+                    console.log('new');
+                    old = newObj;
+                    this.quickView();
+                }
+            }
+        }, 350);
+    }
+
+    componentWillUnmount() {
+        const { DataStore } = this.props;
+        this.removeTempSwimlanes();
+        clearInterval( this.disposer );
+    }
+
     render() {
         const { swimlane, localStore } = this.props;
 
@@ -368,76 +431,113 @@ const valDragTarget = {
         }
 
         return (
-            <div>
-                <FormItem label={ _("Swimlane Name") }>
-                    <Input
-                        size="large"
-                        onChange={ (e) => this.updateName(e) }
-                        value={ swimlane.name }
-                        style={{width: '100%'}}
-                        addonAfter={
-                            <div
-                                style={{
-                                    width: '100%',
-                                    padding: '0 5px'
-                                }}
-                            >
-                                { swimlane.originalName }
+            <div style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
+                <div style={{
+                        position: 'absolute',
+                        borderBottom: '1px solid #ccc',
+                        background: '#fff',
+                        padding: 20,
+                        width: '100%',
+                        zIndex: 999
+                    }}
+                >
+                    <Badge
+                        status={ localStore.swimlaneLivePreview ? "processing" : "default" }
+                        text={ _("Live Preview") }
+                    />
+                    <Switch
+                        style={{ float: 'right' }}
+                        checked={ localStore.swimlaneLivePreview }
+                        onChange={ this.setPreviewMode }
+                        checkedChildren={<Icon type="check" />}
+                        unCheckedChildren={<Icon type="cross" />}
+                    />
+                </div>
+
+                <div style={{
+                        position: 'relative',
+                        height: '100%',
+                        paddingTop: 65,
+                    }}
+                >
+                    <div style={{
+                            position: 'relative',
+                            overflow: 'auto',
+                            height: '100%',
+                            padding: 20,
+                            paddingTop: 0,
+                        }}
+                    >
+                    <FormItem label={ _("Swimlane Name") }>
+                        <Input
+                            onChange={ (e) => this.updateName(e) }
+                            value={ swimlane.name }
+                            style={{width: '100%'}}
+                            addonAfter={
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        padding: '0 5px'
+                                    }}
+                                >
+                                    { swimlane.originalName }
+                                </div>
+                            }
+                        />
+                    </FormItem>
+
+                    <FormItem>
+                        <Checkbox
+                            checked ={ swimlane.everything.enable ? true : false }
+                            onChange={ (e) => swimlane.everything.enable = e.target.checked ? 1 : 0 }
+                        >
+                            { _('Show uncategorized topics') }
+                        </Checkbox>
+                        {  swimlane.everything.enable === 1 &&
+                            <div>
+                                <InputGroup compact>
+                                    <Input
+                                        onChange={ this.updateEverythingText }
+                                        value={ swimlane.everything.text }
+                                        style={{width: '60%'}}
+                                    />
+                                    <Select
+                                        value={ swimlane.everything.position }
+                                        onChange={ this.updateEverythingPosition }
+                                        style={{ width: '40%' }}
+                                    >
+                                        <Option value="top">{ _("At Top") }</Option>
+                                        <Option value="bottom">{ _("At Bottom") }</Option>
+                                    </Select>
+                                </InputGroup>
                             </div>
                         }
-                    />
-                </FormItem>
+                    </FormItem>
 
-                <FormItem>
-                    <Checkbox
-                        checked ={ swimlane.everything.enable ? true : false }
-                        onChange={ (e) => swimlane.everything.enable = e.target.checked ? 1 : 0 }
+                    <Select
+                        style={{ marginBottom: '15px', width: '100%' }}
+                        value={ String(swimlane.all) }
+                        onChange={ (v) => swimlane.all = Number(v) }
                     >
-                        { _('Show uncategorized topics') }
-                    </Checkbox>
-                    {  swimlane.everything.enable === 1 &&
+                        <Option value="1">{ _('View All Possible Values') }</Option>
+                        <Option value="0">{ _('Customize Swimlane Values') }</Option>
+                    </Select>
+
+                    {/* custom swimlane values */}
+                    { swimlane.all === 0 &&
                         <div>
-                            <InputGroup compact>
-                                <Input
-                                    onChange={ this.updateEverythingText }
-                                    value={ swimlane.everything.text }
-                                    style={{width: '60%'}}
-                                />
-                                <Select
-                                    value={ swimlane.everything.position }
-                                    onChange={ this.updateEverythingPosition }
-                                    style={{ width: '40%' }}
-                                >
-                                    <Option value="top">{ _("At Top") }</Option>
-                                    <Option value="bottom">{ _("At Bottom") }</Option>
-                                </Select>
-                            </InputGroup>
+                            <ul className="swim-values">
+                                { swimlane.values.map( (value, i) =>
+                                    <SwimValue localStore={localStore} value={value} swimlane={ swimlane } key={ i } />
+                                )}
+                            </ul>
+                            <FormItem style={{ marginTop: '10px' }} label={ _("Add New Value") }>
+                                <AddNewValue swimlane={swimlane} />
+                            </FormItem>
                         </div>
                     }
-                </FormItem>
-
-                <Select
-                    style={{ marginBottom: '15px', width: '100%' }}
-                    value={ String(swimlane.all) }
-                    onChange={ (v) => swimlane.all = Number(v) }
-                >
-                    <Option value="1">{ _('View All Possible Values') }</Option>
-                    <Option value="0">{ _('Customize Swimlane Values') }</Option>
-                </Select>
-
-                {/* custom swimlane values */}
-                { swimlane.all === 0 &&
-                    <FormItem>
-                        <ul>
-                            { swimlane.values.map( (value, i) =>
-                                <SwimValue localStore={localStore} value={value} swimlane={ swimlane } key={ i } />
-                            )}
-                        </ul>
-                        <FormItem style={{ marginTop: '10px' }} label={ _("Add New Value") }>
-                            <AddNewValue swimlane={swimlane} />
-                        </FormItem>
-                    </FormItem>
-                }
+                    </div>
+                </div>
             </div>
         )
     }
@@ -485,7 +585,7 @@ const swimDragTarget = {
     editSwimlane = () => {
         const { swimlane, localStore, ViewStore } = this.props;
         localStore.currentEditableSwimlane = swimlane;
-        ViewStore.sideBar(<Edit localStore={localStore} swimlane={swimlane} />);
+        ViewStore.sideBar(<Edit style={{ padding: 0 }} localStore={localStore} swimlane={swimlane} />);
     }
 
     handleDelete = () => {
@@ -582,7 +682,6 @@ const swimDragTarget = {
                                     }}
                                 >
                                     <Checkbox
-                                        size="large"
                                         checked ={ swimlane.default ? true : false }
                                         onChange={ this.setDefaultView }
                                     >
@@ -648,7 +747,7 @@ const swimDragTarget = {
 
         const newSwimLane = localStore.swimlanes[ localStore.swimlanes.length - 1 ];
         localStore.currentEditableSwimlane = newSwimLane;
-        ViewStore.sideBar(<Edit localStore={localStore} swimlane={newSwimLane} />);
+        ViewStore.sideBar(<Edit style={{ padding: 0 }} localStore={localStore} swimlane={newSwimLane} />);
     }
 
     render() {
@@ -680,7 +779,6 @@ const swimDragTarget = {
                 <FormItem>
                     <InputGroup compact>
                         <Select
-                            size="large"
                             style={{ width: '80%' }}
                             value={ this.state.value || _("Add New Swimlane From Field") }
                             showSearch
@@ -692,7 +790,6 @@ const swimDragTarget = {
                         </Select>
 
                         <Button
-                            size="large"
                             disabled={ this.state.value.length > 0 ? false : true }
                             style={{
                                 width: '20%'

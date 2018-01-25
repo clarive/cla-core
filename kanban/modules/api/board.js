@@ -4,6 +4,8 @@ var db = require("cla/db");
 var ci = require('cla/ci');
 
 var kanbanDB = require('../kanban-db.js');
+var kanbanCollection = kanbanDB.collection;
+
 var utils = require('../utils.js');
 
 function userCanEditBoard(user, id) {
@@ -12,7 +14,7 @@ function userCanEditBoard(user, id) {
         return true;
     }
 
-    var board = kanbanDB.find({
+    var board = kanbanCollection.find({
         id: id
     }).fields({
         _id: 0,
@@ -110,7 +112,7 @@ exports.create = function(req, res, user, isTemp) {
     };
 
     if (!isTemp) {
-        kanbanDB.insert(kanban);
+        kanbanCollection.insert(kanban);
     }
 
     return kanban;
@@ -126,20 +128,12 @@ exports.data = function(req, res, user) {
 
     var username = user.username();
 
-    var query = {
-        $or: [{
-            creator: username
-        }, {
-            'settings.users': username
-        }, {
-            'settings.administrators': username
-        }]
-    };
+    var query = kanbanDB.query(username);
 
     if (id) {
         query.id = id;
 
-        var board = id === 'temp' ? exports.create(req, res, user, 'temp') : kanbanDB.find(query).fields({
+        var board = id === 'temp' ? exports.create(req, res, user, 'temp') : kanbanCollection.find(query).fields({
             _id: 0,
             cards: 0
         }).next();
@@ -156,7 +150,7 @@ exports.data = function(req, res, user) {
         };
     }
 
-    var boards = kanbanDB.find(query).all();
+    var boards = kanbanCollection.find(query).all();
     return boards;
 };
 
@@ -200,7 +194,7 @@ exports.save = function(req, res, user) {
 
     newSet.name = name;
 
-    kanbanDB.update({
+    kanbanCollection.update({
         id: id
     }, {
         '$set': newSet
@@ -227,7 +221,7 @@ exports.delete = function(req, res, user) {
         }
     }
 
-    kanbanDB.remove({
+    kanbanCollection.remove({
         id: id
     });
 
@@ -278,7 +272,7 @@ exports.topics = function(req, res, user) {
     var page = req.param('page') || 1;
     var loadCards = req.param('cards');
 
-    var board = id === 'temp' ? exports.create(req, res, user, 'temp') : kanbanDB.find({
+    var board = id === 'temp' ? exports.create(req, res, user, 'temp') : kanbanCollection.find({
         id: id
     }).next();
 
@@ -580,7 +574,7 @@ exports.search_topics = function(req, res, user) {
 
 
 function _updateTopicsWithSort(id, topics) {
-    kanbanDB.update({
+    kanbanCollection.update({
         id: id
     }, {
         $push: {
@@ -613,7 +607,7 @@ exports.add_cards = function(req, res, user) {
 
 
     var highestCardSort = 9000000;
-    var cards = kanbanDB.find({ id: id }).fields({ _id: 0, cards: 1 }).next().cards;
+    var cards = kanbanCollection.find({ id: id }).fields({ _id: 0, cards: 1 }).next().cards;
 
     if (cards.length) {
         var sort = cards[ cards.length - 1 ].sort;
@@ -652,7 +646,7 @@ exports.remove_cards = function(req, res, user) {
         }
     }
 
-    kanbanDB.update({
+    kanbanCollection.update({
         id: id
     }, {
         $pull: {
@@ -677,7 +671,7 @@ exports.update_sort = function(req, res, user) {
     var mid = req.param('mid');
     var sort = req.param('sort');
 
-    kanbanDB.update({
+    kanbanCollection.update({
         id: id,
         "cards.mid": mid
     }, {

@@ -1,6 +1,7 @@
 import { autorun, computed, observable, action } from 'mobx';
 import React from "react";
-
+import { Modal } from 'antd';
+import { deepCopy } from 'lib/utils';
 import api from 'lib/api';
 import { dynamicSort, setTopicProjects } from "lib/utils.js";
 
@@ -64,6 +65,7 @@ const defaultSwimLanesMap = [
 ]
 
 const quickFilterObj = {
+    searchText: "",
     categories : [],
     createdBy: [],
     labels: [],
@@ -236,6 +238,44 @@ class DataStore {
     @observable swimlanesSettings =  [];
 
     // ========================  ACTIONS ===========================
+    @action saveBoard (obj, callback) {
+
+        let lists = deepCopy( obj.lists || this.lists );
+        lists.forEach(function(list){
+            delete list.total;
+            list.cards = [];
+            list.collapsed = 0;
+        });
+
+        const settings = {
+            lists: lists,
+            filter: obj.filter || this.filter,
+            users: obj.users || this.users,
+            groups: obj.groups || this.groups,
+            swimlanes: obj.swimlanes || this.swimlanesSettings
+        };
+
+        api.postJSON('board/save', {
+            id: this.id,
+            name: obj.name,
+            settings: JSON.stringify(settings)
+        }).done( (data) => {
+
+            if (data.error) {
+                Modal.error({
+                    title: _("Error"),
+                    content: data.msg
+                });
+                return;
+            }
+
+            this.reset(data.id);
+            callback(data);
+            if (this.ClaStore && this.ClaStore.onNewSettings) {
+                this.ClaStore.onNewSettings( data );
+            }
+        });
+    }
 
     @action getBoardData (board) {
         this.id = board;
@@ -266,6 +306,8 @@ class DataStore {
             this.isAdmin = data.isAdmin ? true : false;
 
             this.users = board.settings.users || [];
+
+            this.groups = board.settings.groups || [];
 
             this.id = board.id;
 
@@ -336,6 +378,22 @@ class DataStore {
             this.ViewStore.loading(false);
             this.loaded = true;
         });
+    }
+
+    buildDefaultSwimlane (name, value) {
+        return {
+            name: name,
+            value: value,
+            total: 0,
+            collapsed: 0,
+            lists: this.lists.map( () => {
+                return {
+                    cards: [],
+                    cardsPerList: 0,
+                    canDrop: 0
+                }
+            })
+        }
     }
 
     @action updateSwimLanes (swimlaneId: string) {
@@ -435,8 +493,15 @@ class DataStore {
                         }
                     }
 
+                    if (this.quickFilter.searchText instanceof RegExp) {
+                        if (card.title.search( this.quickFilter.searchText ) === -1){
+                            return;
+                        }
+                    }
+
                     let value = card[field];
-                    let key = everythingKey;
+                    let key   = everythingKey;
+                    let name  = everythingText;
 
                     // array? only allow array values with single value
                     // to be listed in swimlanes
@@ -450,23 +515,12 @@ class DataStore {
 
                     if ( value === 0 || ( value != "" && value ) ) {
                         if (swimlane.all == 1 || swimlane.values.some((v) => v.value == value)) {
-                            key = value;
+                            key  = value;
+                            name = value;
                         }
                     }
 
-                    swimlanes[key] = swimlanes[key] || {
-                        name: key,
-                        value: value,
-                        total: 0,
-                        collapsed: 0,
-                        lists: this.lists.map( () => {
-                            return {
-                                cards: [],
-                                cardsPerList: 0,
-                                canDrop: 0
-                            }
-                        })
-                    }
+                    swimlanes[key] = swimlanes[key] || this.buildDefaultSwimlane(name, value);
 
                     swimlanes[key].lists[index] = swimlanes[key].lists[index] || [];
                     swimlanes[key].lists[index].cards.push(card);
@@ -474,8 +528,13 @@ class DataStore {
                 });
             });
 
-            const everythingLane = swimlanes[everythingKey];
-            if (everythingLane) everythingLane.name = everythingText;
+            let everythingLane;
+            if (everythingEnabled) {
+                everythingLane = swimlanes[everythingKey] || this.buildDefaultSwimlane(everythingText, "");
+            }
+
+            // delete as we will add later either at
+            // top or bottom of the board
             delete swimlanes[everythingKey];
 
             let arr = [];
@@ -490,16 +549,8 @@ class DataStore {
                         arr.push( v );
                     } else {
                         // push an empty swimlane
-                        arr.push({
-                            name: name, value: value, total: 0, collapsed: 0,
-                            lists: this.lists.map( () => {
-                                return {
-                                    cards: [],
-                                    cardsPerList: 0,
-                                    canDrop: 0
-                                }
-                            })
-                        });
+                        const defaultSwimlane = this.buildDefaultSwimlane(name, value)
+                        arr.push(defaultSwimlane);
                     }
                 });
             } else {
@@ -510,7 +561,9 @@ class DataStore {
 
             const sortSwimlanes = (newArr) => {
                 this.swimLanes.replace( newArr );
-                if (everythingEnabled && everythingLane ) {
+                if (everythingEnabled) {
+                    // makesure everything value is empty
+                    everythingLane.value = "";
                     if (everythingPosition === 'top') {
                         this.swimLanes.unshift( everythingLane );
                     } else {
@@ -550,7 +603,7 @@ class DataStore {
         let filtersNum = 0;
         Object.keys(quickFilter).forEach( (key) => {
             const filter = quickFilter[key];
-            if (filter.length > 0 ) {
+            if (filter.length > 0 || filter instanceof RegExp) {
                 filtersNum++;
             }
         })
@@ -585,7 +638,16 @@ class DataStore {
     @action deleteBoard () {
         api.post('board/delete', {
             id : this.id
-        }).done(() => {
+        }).done((data) => {
+
+            if (data.error) {
+                Modal.error({
+                    title: _("Error"),
+                    content: data.msg
+                });
+                return;
+            }
+
             if (this.ClaStore && this.ClaStore.onDelete) {
                 this.ClaStore.onDelete();
             } else {

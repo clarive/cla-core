@@ -543,7 +543,11 @@ const typeLabels = {
 
         return (
             <div style={{ width: '100%' }}>
-                <Tabs style={{ width: '100%', paddingBottom: '125px', position:'relative' }} className="left" type="card">
+                <Tabs
+                    style={{ width: '100%', paddingBottom: '125px', position:'relative' }}
+                    className="left kanban-job-window"
+                    type="card"
+                >
                     <TabPane tab="Job Window" key="1">
                         <Form layout="vertical">
                             <FormItem label={ _("Transitions") }>
@@ -610,7 +614,7 @@ const typeLabels = {
                                         onChange={ (v) => this.setTime( v ) }
                                     />
 
-                                    <div style={{ float: 'right', width: '65%', padding: '2px 0 0 4px' }}>
+                                    <div style={{ float: 'right', width: '65%', padding: '4px 0 0 4px' }}>
                                         { timeWindowMsg }
                                     </div>
                                 </div>
@@ -657,16 +661,15 @@ const typeLabels = {
                         <Button
                             style={{ marginRight: '5px', display: 'inline-block' }}
                             onClick={ this.props.cancel }
-                            size="large"
                         >
                             { _("Cancel") }
                         </Button>
                         <Button
                             disabled={ windowType === 'F' && !store.perm.canCreateJobOutSideWindow ? true : false }
-                            type="primary"
-                            size="large"
                             onClick={ this.submit }
                             style={{ display: 'inline-block' }}
+                            type="primary"
+                            ghost
                         >
                             { _("Submit") }
                         </Button>

@@ -14,6 +14,7 @@ import View from 'components/View.jsx';
 import Filter from 'components/Filter.jsx';
 import Plan from 'components/Plan.jsx';
 
+import Create from 'components/Create.jsx';
 import KanbanLists from 'components/Lists.jsx';
 import Layout from 'components/Layout/Layout.jsx';
 
@@ -40,6 +41,11 @@ import Layout from 'components/Layout/Layout.jsx';
         }
     }
 
+    saveTempBoard = () => {
+        const { DataStore, ViewStore } = this.props;
+        ViewStore.modal(<Create />);
+    }
+
     render() {
         const { ViewStore, DataStore } = this.props;
 
@@ -49,42 +55,64 @@ import Layout from 'components/Layout/Layout.jsx';
             <Menu
                 mode="horizontal"
                 defaultSelectedKeys={[]}
-                style={{padding: '7px', border: 0 }}
+                style={{ padding: 9, border: 0 }}
             >
 
-                <Menu.Item key="mail" style={{ float:'right', border: 0 }}>
+                <Menu.Item key="mail" style={{ float:'right', border: 0, padding: 0 }}>
                     <ButtonGroup>
                         <Button
                             onClick={ this.showFilter.bind(this) }
-                            style={{ margin: '0 2px', paddingLeft: '10px' }} type="primary">
+                            style={{ margin: '0 2px' }}
+                            type="primary"
+                            ghost
+                        >
                             <Icon type={ !DataStore.hasQuickFilter ? "filter" : "check" } />
                             { _("Filter") }
                             { !!DataStore.hasQuickFilter && <span> ( { DataStore.hasQuickFilter } ) </span>}
                         </Button>
                     </ButtonGroup>
 
-                    {   !!DataStore.isAdmin &&
+                    {   !!DataStore.isAdmin && !DataStore.isTempBoard &&
                         <Button
-                        icon="edit"
-                        onClick={ () => Configure(ViewStore, DataStore) }
-                        style={{ margin: '0 2px', paddingLeft: '10px' }} type="primary">{ _("Configure") }</Button>
+                            icon="edit"
+                            onClick={ () => Configure(ViewStore, DataStore) }
+                            style={{ margin: '0 2px', paddingLeft: '10px' }}
+                            type="primary"
+                            ghost
+                        >
+                            { _("Configure") }
+                        </Button>
+                    }
+
+                    {   DataStore.isTempBoard &&
+                        <Button
+                            icon="check"
+                            onClick={ this.saveTempBoard }
+                            style={{ margin: '0 2px', paddingLeft: '10px' }}
+                            type="primary"
+                            ghost
+                        >
+                            { _("Save Board") }
+                        </Button>
                     }
                 </Menu.Item>
 
                 { !!DataStore.isAdmin && DataStore.isStaticBoard &&
-                    <Menu.Item key="backlog" style={{ float:'left', border: 0 }}>
+                    <Menu.Item key="backlog" style={{ float:'left', border: 0, padding: 0 }}>
                         <Button
                             onClick={ () => Plan(ViewStore, DataStore) }
-                            type="primary">{ _("Plan Mode") }
+                            type="primary"
+                            ghost
+                        >
+                            { _("Add to Board") }
                         </Button>
                     </Menu.Item>
                 }
 
-                <Menu.Item key="app" style={{ width: '250px', border: 0 }}>
+                <Menu.Item key="app" style={{ width: '250px', border: 0, padding: 0 }}>
                     <Select
                         showSearch
                         optionFilterProp="string"
-                        size="large"
                         style={{ margin: '5px', width: '100%' }}
                         value={ DataStore.currentSwimLane.id ? DataStore.currentSwimLane.id : 'no swimlanes' }
                         onChange={this.handleChange}
@@ -105,11 +133,16 @@ import Layout from 'components/Layout/Layout.jsx';
                         )}
 
                         <Option style={ seperatorStype } value={'sep-1' + Math.random() } disabled={true} ></Option>
-                        <Option style={{ background: '#eee', color: '#888', textAlign: 'center' }} value="">{ _("Configure Swimlanes") }</Option>
+
+                        { DataStore.isAdmin &&
+                            <Option style={{ background: '#eee', color: '#888', textAlign: 'center' }} value="">
+                                { _("Configure Swimlanes") }
+                            </Option>
+                        }
                     </Select>
                     <Popover placement="bottom" content={<View />} trigger="click">
-                        <Button size="large">
-                        <Icon type="bars" />{ _("View") }
+                        <Button>
+                            <Icon type="bars" />{ _("View") }
                         </Button>
                     </Popover>
                 </Menu.Item>

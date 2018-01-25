@@ -12,8 +12,9 @@ import { observer, inject } from 'mobx-react';
     render() {
         const sideBarComp = this.props.ViewStore.sideBarComp;
         const position = sideBarComp.props.position || 'right'
+        const style = sideBarComp.props.style || {};
         return (
-            <div className={'side-bar ' + ( position ) }>
+            <div className={'side-bar ' + ( position ) } style={{ ...style }}>
                 { sideBarComp }
             </div>
         );
